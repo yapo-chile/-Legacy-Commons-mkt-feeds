@@ -1,0 +1,15 @@
+FROM python:3.7.2-slim
+COPY . /app
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gcc build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install -r requirements.txt \
+    && apt-get purge -y --auto-remove gcc build-essential
+
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "--workers", "6", \
+    "--threads", "4", "--worker-class", "gthread", \
+    "--log-level", "debug", \
+    "--capture-output" ,"--enable-stdio-inheritance", \
+    "app:app"]

@@ -1,0 +1,48 @@
+version: '3'
+ 
+services:
+  feeds:
+    image: ${DOCKER_IMAGE_COMPOSE}
+    container_name: feeds-core
+    depends_on:
+      - proxy
+      - db
+    links:
+      - proxy
+      - db
+    expose:
+      - "5000"
+    ports:
+      - "${SERVER_EXPOSED_PORT}:${SERVER_PORT}"
+    environment:
+      TZ: "America/Santiago"
+      SERVER_HOST: ${SERVER_HOST}
+      SERVER_PORT: ${SERVER_PORT}
+      SERVER_EXPOSED_PORT: ${SERVER_EXPOSED_PORT}
+      SERVER_URL: ${SERVER_URL}
+      SERVER_DEBUG: ${SERVER_DEBUG}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+  proxy:
+    build:
+      context:  ./nginx
+      dockerfile: Dockerfile
+    container_name: feeds-proxy
+    ports:
+      - "8080:8080"
+  db:
+    image: postgres:12.0-alpine
+    container_name: feeds-db
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data/pgdata"
+    ports:
+      - "${DATABASE_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: "America/Santiago"
