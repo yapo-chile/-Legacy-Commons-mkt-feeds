@@ -41,6 +41,9 @@ reboot: remove build
 start-local:
 	python app/app.py
 
+mypy:
+	mypy app/app.py
+
 info:
 	@echo "YO           	   : ${YO}"
 	@echo "ServerRoot   	   : ${SERVER_ROOT}"

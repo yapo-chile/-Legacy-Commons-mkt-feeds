@@ -4,16 +4,20 @@ from flask import request
 import json
 import logging
 import os
+import typing as t
 
-from handlers import healthcheck
-from utils.logger import Response
+import domain as d
+import interfaces.handlers as h
 
 app = Flask(__name__)
 
-@app.route("/v1/healthcheck")
-def healthCheck():
-    return healthcheck.handler()
+@app.route("/healthcheck")
+def healthCheck() -> d.JSONType:
+    return h.Status()
 
+@app.route('/catalog/<int:catalog_id>', methods=['GET'])
+def catalog(catalog_id) -> d.JSONType:
+    return h.CatalogHandler(d.CatalogId(catalog_id)).Run()
 
 if __name__ == "__main__":
     debug = os.getenv('SERVER_DEBUG') or 'true'
