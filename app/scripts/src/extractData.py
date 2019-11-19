@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 from utils.RawSqlToDict import RawSqlToDict
+import pandas as pd
 
 class extract_feed(object):
 
@@ -255,10 +256,31 @@ class extract_feed(object):
         return data
 
 
-import pandas as pd
-pd.options.display.max_colwidth = 500
-category=1220
-ad_ids_filter=" 80778127, 80737379, 80112070, 80241563, 81736906 "
-ef = extract_feed()
-data = pd.DataFrame(ef.extract_product_feed(category, ad_ids_filter))
-print(data.url)
+
+def getFeedToEndpoint(category=None):
+    ef = extract_feed()
+    data = pd.DataFrame(ef.extract_product_feed(category))
+
+if __name__ == '__main__':
+    getFeedToEndpoint(1220)
+    getFeedToEndpoint(1240)
+    getFeedToEndpoint(2020)
+    getFeedToEndpoint(2060)
+    getFeedToEndpoint(3060)
+    getFeedToEndpoint(3040)
+    getFeedToEndpoint(3020)
+    getFeedToEndpoint(3080)
+    getFeedToEndpoint(4020)
+    getFeedToEndpoint(4080)
+    getFeedToEndpoint(5020)
+    getFeedToEndpoint(5040)
+    getFeedToEndpoint(5060)
+    getFeedToEndpoint(5160)
+    getFeedToEndpoint(6020)
+    getFeedToEndpoint(6060)
+    getFeedToEndpoint(6080)
+    getFeedToEndpoint(6100)
+    getFeedToEndpoint(6120)
+    getFeedToEndpoint(6140)
+    getFeedToEndpoint(6160)
+    getFeedToEndpoint(6180)
