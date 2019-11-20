@@ -1,23 +1,20 @@
 # coding=utf-8
-import logging
-from utils.RawSqlToDict import RawSqlToDict
+from utils.logger import logger
+from utils.rawSqlToDict import rawSqlToDict
 import pandas as pd
 
-class extract_feed(object):
+class extractFeed(object):
 
     def __init__( self ):
-        self.logger = logging.getLogger('extract_feed')
-        logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d - %(funcName)20s()] %(message)s',
-            datefmt='%Y-%m-%d:%H:%M:%S',
-            level=logging.INFO)
+        self.log = logger()
 
-    def delete_url_special_characters( self, url ):
+    def deleteUrlSpecialCharacters( self, url ):
         chars = ["á","é","í","ó","ú",'!' , '?' , ',' , ';' , '¨' , 'º' , 'ª' , '$' , '#' , '&' ]
         if any (k in chars for k in url):
             return False
         return True
 
-    def filter_category(self, category=None):
+    def filterCategory(self, category=None):
         filter_additional_category = ""
         filter_price = ""
         group_by = " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 "
@@ -43,7 +40,7 @@ class extract_feed(object):
 
         return filter_additional_category, filter_price, group_by
 
-    def generate_case_url(self):
+    def generateCaseUrl(self):
         categories = {
             1220: 'comprar',
             1240: 'arrendar',
@@ -110,7 +107,7 @@ class extract_feed(object):
         out += "end as url,"
         return out
 
-    def extract_product_feed(self, category=None, ad_ids_filter=""):
+    def extractProductFeed(self, category=None, ad_ids_filter=""):
         """
         Method that build the query for diferents categories
         ----------
@@ -124,7 +121,7 @@ class extract_feed(object):
         if ( category == None ):
             return
 
-        filter_additional_category, filter_price, group_by = self.filter_category(category)
+        filter_additional_category, filter_price, group_by = self.filterCategory(category)
 
         filter_uniq_category = " and category in ( " + str(category) + " ) "
 
@@ -132,9 +129,9 @@ class extract_feed(object):
         if ( ad_ids_filter != "" ):
             filter_ad_ids = " and ad_id in ( " + ad_ids_filter + " ) "
 
-        self.logger.info("Extract Product Feed from category %s " % category )
-        self.logger.info("Filter add category %s " % filter_additional_category)
-        self.logger.info("Filter ad ids %s " % filter_ad_ids)
+        self.log.getLogInfo("Extract Product Feed from category " + str(category) )
+        self.log.getLogInfo("Filter add category " + filter_additional_category)
+        self.log.getLogInfo("Filter ad ids " + filter_ad_ids)
         query = """
         select *
         from (select
@@ -250,19 +247,23 @@ class extract_feed(object):
             order by
                 count(mq.mail_queue_id) desc
             ) as data
-        """ % (self.generate_case_url(), filter_uniq_category, filter_additional_category , filter_ad_ids , filter_price, group_by)
-        data = RawSqlToDict(query)
-        self.logger.info("Extract Product Feed Successed")
+        """ % (self.generateCaseUrl(), filter_uniq_category, filter_additional_category , filter_ad_ids , filter_price, group_by)
+        data = rawSqlToDict(query)
+        self.log.getLogInfo("Extract Product Feed Successed")
         return data
 
 
 
 def getFeedToEndpoint(category=None):
-    ef = extract_feed()
-    data = pd.DataFrame(ef.extract_product_feed(category))
+    ef = extractFeed()
+    ad_ids_filter=" 80778127, 80737379, 80112070, 80241563, 81736906 "
+    data = pd.DataFrame(ef.extractProductFeed(category, ad_ids_filter))
+    print(data.head())
 
 if __name__ == '__main__':
+    
     getFeedToEndpoint(1220)
+    """
     getFeedToEndpoint(1240)
     getFeedToEndpoint(2020)
     getFeedToEndpoint(2060)
@@ -284,3 +285,4 @@ if __name__ == '__main__':
     getFeedToEndpoint(6140)
     getFeedToEndpoint(6160)
     getFeedToEndpoint(6180)
+    """
