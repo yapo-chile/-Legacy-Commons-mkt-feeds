@@ -1,7 +1,7 @@
 import psycopg2
-from .Configure import Conf
+from .configure import conf
 
-def RawSqlToDict(query, param=None):
+def rawSqlToDict(query, param=None):
     """
     Funcion para convertir un query raw en un dict
     Parameters
@@ -16,8 +16,8 @@ def RawSqlToDict(query, param=None):
         formato [{u'nombre:'valor',N..}]
     """
     try:
-        config = Conf( "./utils/resources/configuration.properties" )
-        conn = psycopg2.connect("dbname='"+config.get_specific( 'BLOCKETDB.DATABASE' )+"' user='"+config.get_specific( 'BLOCKETDB.USERNAME' )+"' host='"+config.get_specific( 'BLOCKETDB.HOST' )+"' password='"+config.get_specific( 'BLOCKETDB.PASSWORD' )+"'")
+        config = conf( "./utils/resources/configuration.properties" )
+        conn = psycopg2.connect("dbname='"+config.getSpecific( 'BLOCKETDB.DATABASE' )+"' user='"+config.getSpecific( 'BLOCKETDB.USERNAME' )+"' host='"+config.getSpecific( 'BLOCKETDB.HOST' )+"' password='"+config.getSpecific( 'BLOCKETDB.PASSWORD' )+"'")
     except Exception as e:
         exit(e)
     cursor = conn.cursor()
