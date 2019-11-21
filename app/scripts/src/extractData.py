@@ -1,7 +1,6 @@
 # coding=utf-8
 from utils.logger import logger
 from utils.rawSqlToDict import rawSqlToDict
-from utils.writeDatabase import writeDatabase
 import pandas as pd
 
 class extractFeed(object):
@@ -257,20 +256,16 @@ class extractFeed(object):
 
 def getFeedToEndpoint(category=None, position=1):
     ef = extractFeed()
-    #ad_ids_filter=" 80778127, 80737379, 80112070, 80241563, 81736906, 79219184, 79596895 "
-    #data = pd.DataFrame(ef.extractProductFeed(category, ad_ids_filter))
     data = pd.DataFrame(ef.extractProductFeed(category))
-    writeOutput = writeDatabase()
+    #writeOutput = writeDatabase()
     if (position == 1):
         ifExists = 'replace'
     else:
         ifExists = 'append'
-    print(data.count)
     data.to_csv('./utils/resources/feed'+str(category)+'.csv', index=False, header=True, encoding='utf-8')
 
 if __name__ == '__main__':
     categoryList = [ 1220, 1240, 2020, 2060, 3060, 3040, 3020, 3080, 4020, 4080, 5020, 5040, 5060, 5160, 6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180 ]
-    categoryList = [ 1220, 3060 ]
 
     countCategory=1
     for category in categoryList:
