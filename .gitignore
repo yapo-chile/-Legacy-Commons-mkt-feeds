@@ -8,3 +8,4 @@ share
 pgdata
 .mypy_cache
 __pycache__/
+*.csv
