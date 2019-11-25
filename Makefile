@@ -10,8 +10,7 @@ docker-stop:
 
 ## Compiles all the services
 docker-build: build
-	docker-compose build
-	#--no-cache
+	docker-compose build --no-cache
 
 ## Compile and start the service using docker
 compose-up: docker-build
