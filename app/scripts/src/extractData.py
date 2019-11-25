@@ -1,6 +1,7 @@
 # coding=utf-8
 from utils.logger import logger
 from utils.rawSqlToDict import rawSqlToDict
+from utils.writeDatabase import writeDatabase
 import pandas as pd
 
 class extractFeed(object):
@@ -255,18 +256,36 @@ class extractFeed(object):
 
 
 def getFeedToEndpoint(category=None, position=1):
+    fileName='./utils/resources/feed'+str(category)+'.csv'
+    sequence=["ad_id"
+                , "ad_insertion"
+                , "name"
+                , "image_url"
+                , "main_category"
+                , "category"
+	            , "description"
+                , "price"
+                , "region"
+                , "url"
+                , "condition"
+                , "ios_url"
+                , "ios_app_store_id"
+                , "ios_app_name"
+                , "android_url"
+                , "android_package"
+                , "android_app_name"
+	            , "num_ad_replies" ]
     ef = extractFeed()
     data = pd.DataFrame(ef.extractProductFeed(category))
-    #writeOutput = writeDatabase()
-    if (position == 1):
-        ifExists = 'replace'
-    else:
-        ifExists = 'append'
-    data.to_csv('./utils/resources/feed'+str(category)+'.csv', index=False, header=True, encoding='utf-8')
+    data.to_csv(fileName, index=False, columns=sequence, encoding='utf-8', sep=';')
+
+    schemaTable = 'dm_analysis.data_feed'
+    wd = writeDatabase()
+    wd.deleteCategory(schemaTable, category)
+    wd.insertCsv(schemaTable, fileName)
 
 if __name__ == '__main__':
     categoryList = [ 1220, 1240, 2020, 2060, 3060, 3040, 3020, 3080, 4020, 4080, 5020, 5040, 5060, 5160, 6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180 ]
-
     countCategory=1
     for category in categoryList:
         getFeedToEndpoint(category, countCategory)
