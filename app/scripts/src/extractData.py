@@ -286,7 +286,6 @@ def getFeedToEndpoint(category=None, position=1):
 
 if __name__ == '__main__':
     categoryList = [ 1220, 1240, 2020, 2060, 3060, 3040, 3020, 3080, 4020, 4080, 5020, 5040, 5060, 5160, 6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180 ]
-    categoryList = [ 6100 ]
     countCategory=1
     for category in categoryList:
         getFeedToEndpoint(category, countCategory)

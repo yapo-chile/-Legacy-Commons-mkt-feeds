@@ -106,10 +106,12 @@ class writeDatabase(object):
             with open(fileName) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=';')
                 rowCount=0
+                batchData=[]
                 for row in csv_reader:
                     rowCount += 1
-                    if (rowCount > 1 ):
-                        cur.execute(insertQuery, row)
+                    batchData.append(row)
+                    if ((rowCount > 1)  and (rowCount % 500  == 0)):
+                        cur.executemany(insertQuery, batchData)
                         self.engine.commit()
             cur.close()            
         except Exception as e:
