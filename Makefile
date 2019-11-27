@@ -27,8 +27,8 @@ docker-publish:
 
 ## Execute the service
 remove:
-	docker stop ${APPNAME}
-	docker rm ${APPNAME}
+	docker stop ${APPNAME}-core
+	docker rm ${APPNAME}-core
 
 ## Compile and start the service
 build:
@@ -44,11 +44,16 @@ start-local:
 mypy:
 	mypy app/app.py
 
+# Installs libraries locally
+install:
+	pip install -r app/requirements.txt
+
 info:
-	@echo "YO           	   : ${YO}"
-	@echo "ServerRoot   	   : ${SERVER_ROOT}"
-	@echo "API Base URL 	   : ${SERVER_URL}"
-	@echo "API Healthcheck URL : ${SERVER_URL}/v1/healthcheck"
-	@echo "DB connect          : psql -h ${SERVER_HOST} -U ${DATABASE_USER} -p "${DATABASE_PORT}" ${DATABASE_NAME}"
-	@echo "SERVER ACCESS       : docker exec -it feeds_core sh"
-	@echo "DB ACCESS           : docker exec -it feeds-db psql -U ${DATABASE_USER} ${DATABASE_NAME}"
+	@echo "YO           	         : ${YO}"
+	@echo "ServerRoot   	         : ${SERVER_ROOT}"
+	@echo "API Base URL 	         : ${SERVER_URL}"
+	@echo "API Healthcheck URL       : ${SERVER_URL}/healthcheck"
+	@echo "API Healthcheck NGINX URL : http://${SERVER_HOST}:${NGINX_EXPOSED_PORT}/feeds/api/v1/healthcheck"
+	@echo "DB connect                : psql -h ${SERVER_HOST} -U ${DATABASE_USER} -p "${DATABASE_PORT}" ${DATABASE_NAME}"
+	@echo "SERVER ACCESS             : docker exec -it feeds-core sh"
+	@echo "DB ACCESS                 : docker exec -it feeds-db psql -U ${DATABASE_USER} ${DATABASE_NAME}"
