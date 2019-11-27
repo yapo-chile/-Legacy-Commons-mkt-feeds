@@ -52,8 +52,8 @@ export LOGGER_LOG_LEVEL=0
 export DOCKER_REGISTRY=containers.mpi-internal.com
 export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
 export DOCKER_IMAGE_COMPOSE=${DOCKER_REGISTRY}/yapo/${APPNAME}:${GIT_BRANCH}
-export DOCKER_PORT=8080
 export DOCKER_GATEWAY_PORT=$(call genport,4)
+export DOCKER_CONTAINER_NAME=${APPNAME}-core
 
 
 BUILD_NAME=$(shell if [ -n "${GIT_TAG}" ]; then echo "${GIT_TAG}"; else echo "${GIT_BRANCH}"; fi;)
@@ -65,3 +65,7 @@ export DOCS_DIR=docs
 export DOCS_HOST=localhost:$(call genport,3)
 export DOCS_PATH=github.mpi-internal.com/Yapo/${APPNAME}
 export DOCS_COMMIT_MESSAGE=Generate updated documentation
+
+# NGINX variables
+export NGINX_PORT=8080
+export NGINX_EXPOSED_PORT=$(call genport,5)

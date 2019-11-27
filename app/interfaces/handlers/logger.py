@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 import domain as d
+import logging
 from flask import make_response, jsonify
 
+LOGGER = logging.getLogger('gunicorn.error')
 
 class Response():
-    def __init__(self, status: d.StatusCode, data: d.JSONType = None) -> None:
-        self.status = d.ValidateRestStatusCode(status)
+    def __init__(self, status: d.HTTPStatus, data: d.JSONType = None) -> None:
+        self.status = status
         if data:
             self.data = data
     
@@ -34,4 +36,3 @@ class Response():
         response.headers['Content-Type'] = 'application/json'
         response.headers['Access-Control-Allow-Origin'] ='*'
         return d.JSONType(response)
-

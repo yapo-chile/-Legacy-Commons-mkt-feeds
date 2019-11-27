@@ -8,8 +8,13 @@ RUN apt-get update \
     && pip install -r requirements.txt \
     && apt-get purge -y --auto-remove gcc build-essential
 
+COPY scripts/entrypoint.sh /entrypoint.sh
+RUN sed -i 's/\r//' /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "--workers", "6", \
     "--threads", "4", "--worker-class", "gthread", \
-    "--log-level", "debug", \
-    "--capture-output" ,"--enable-stdio-inheritance", \
+    "--log-level", "debug", "--enable-stdio-inheritance", \
+    "--capture-output", \
     "app:app"]

@@ -1,18 +1,17 @@
 import domain as d
+import pandas as pd
+from interfaces.repository.catalogRepo import CatalogRepo
 
-class CatalogUsecases:
+class CatalogUsecases(CatalogRepo):
+    """
+    Receives a catalog id and if valid returns a size-fixed data matrix.
 
-    def __init__(self, catalog_id:d.CatalogId) -> None:
-        self.catalog = catalog_id
+    Parameters
+    ----------
+    id : domain type CatalogId
 
-    def findCatalog(self) -> None:
-        if self.catalog == 1:
-            self.params = d.JSONType({"test": "ok"})
-        else:
-            raise Exception("Catalog Not Found")
-    
-    def Execute(self) -> d.JSONType:
-        self.findCatalog()
-        return self.params
+    """
+    def get(self) -> pd.DataFrame():
+        return self.getCatalog()
 
 
