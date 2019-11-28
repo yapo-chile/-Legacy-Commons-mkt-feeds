@@ -1,5 +1,6 @@
 import os
 
+<<<<<<< HEAD
 
 def DatabaseConf(dbname='DATABASE'):
     if(dbname == 'DATABASE'):
@@ -14,3 +15,11 @@ def DatabaseConf(dbname='DATABASE'):
                 "user": os.environ.get("BLOCKETDB_USER", "bnbiuser"),
                 "password": os.environ.get("BLOCKETDB_PASSWORD", "VE1bi@BN112AzLkOP"),
                 "dbname": os.environ.get("BLOCKETDB_NAME", "blocketdb")}
+=======
+def DatabaseConf():
+    return {"host": os.environ.get("DATABASE_HOST", "0.0.0.0"),
+            "port": os.environ.get("DATABASE_PORT", "5432"),
+            "user": os.environ.get("DATABASE_USER", "docker"),
+            "password": os.environ.get("DATABASE_PASSWORD", "docker"),
+            "dbname": os.environ.get("DATABASE_NAME", "feeds-db")}
+>>>>>>> 9141e82ee64d6050b0f51af117b231c2a12e6207
