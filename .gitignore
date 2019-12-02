@@ -7,4 +7,5 @@ share
 *.pyc
 pgdata
 .mypy_cache
+man
 __pycache__/

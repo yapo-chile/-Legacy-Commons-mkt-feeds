@@ -43,10 +43,7 @@ export DATABASE_PASSWORD=docker
 export PGPASSWORD=${DATABASE_PASSWORD}
 
 #LOGGER variables
-export LOGGER_SYSLOG_ENABLED=false
-export LOGGER_SYSLOG_IDENTITY=${APPNAME}
-export LOGGER_STDLOG_ENABLED=true
-export LOGGER_LOG_LEVEL=0
+export LOGGER_LOG_LEVEL=gunicorn.error
 
 #DOCKER variables for app
 export DOCKER_REGISTRY=containers.mpi-internal.com

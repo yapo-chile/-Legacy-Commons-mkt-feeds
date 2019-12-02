@@ -42,11 +42,14 @@ start-local:
 	python app/app.py
 
 mypy:
-	mypy app/app.py
+	mypy app/app.py 
 
 # Installs libraries locally
 install:
 	pip install -r app/requirements.txt
+
+tests:
+	cd app && nosetests -v tests/
 
 info:
 	@echo "YO           	         : ${YO}"
