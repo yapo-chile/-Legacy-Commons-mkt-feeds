@@ -53,5 +53,5 @@ class CatalogRepo():
             self._getData()
             self._applyCreateColumn()
             self._applyFields()
-        print(self.catalog)
+        #print(self.catalog)
         return self.catalog

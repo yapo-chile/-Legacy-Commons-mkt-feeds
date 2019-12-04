@@ -2,11 +2,13 @@ import io
 import domain as d
 import pandas as pd
 import datetime
-import logging
 from flask import make_response
 from usecases.catalog import CatalogUsecases
 from .handler import Response
 
+# CatalogHandler implements the handler interface and responds to [GET] /catalog/{id}
+# requests, then executes the Get catalog usecase and returns the response
+# with a io string with a csv header response.
 class CatalogHandler(CatalogUsecases):
 
     def __init__(self, catalogId:d.CatalogId, config:d.Config, logger:logging) -> None:
@@ -18,14 +20,15 @@ class CatalogHandler(CatalogUsecases):
         data = self.get()
         stream = io.StringIO()
         data.to_csv(stream, sep=";")
-        output = make_response(stream.getvalue())
-        output.headers["Content-Disposition"] = "attachment; filename=export{}.csv".format(datetime.datetime.now())
-        output.headers["Content-type"] = "text/csv"
+
+        r = Response(200)
+        r.toCsv(stream=stream)
+        
         if len(data) > 0:
             self.logger.info('{} rows downloaded from catalog id {}'.format(len(data), self.id))
         else:
             self.logger.info('No rows found for catalog id {}, returning empty file'.format(self.id))
-        return output
+        return r
 
     @property
     def id(self) -> d.CatalogId:
@@ -33,6 +36,7 @@ class CatalogHandler(CatalogUsecases):
     
     @id.setter
     def id(self, catalogId:d.CatalogId) -> None:
+        # Validates that catalogId is not negative
         if catalogId <= 0:
             raise ValueError("Catalog id is not a valid value")
         self.__id = catalogId

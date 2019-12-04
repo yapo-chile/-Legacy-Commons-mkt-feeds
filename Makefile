@@ -36,19 +36,19 @@ build:
 
 ## Compile and start the service using docker
 reboot: remove build
-	docker run -d --name ${APPNAME}  -p ${SERVER_EXPOSED_PORT}:${SERVER_PORT} ${DOCKER_IMAGE}:${BUILD_TAG}
+	docker run -d --name ${APPNAME} -p ${SERVER_EXPOSED_PORT}:${SERVER_PORT} ${DOCKER_IMAGE}:${BUILD_TAG}
 
 start-local:
 	python app/app.py
 
 mypy:
-	mypy app/app.py 
+	mypy app/app.py
 
 # Installs libraries locally
 install:
 	pip install -r app/requirements.txt
 
-tests:
+test:
 	cd app && nosetests -v tests/
 
 info:
