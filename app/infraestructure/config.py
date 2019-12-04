@@ -19,11 +19,19 @@ class Server(NamedTuple):
 
 # Database tuple that contains all definitions for its conection
 class Database(NamedTuple):
-    Host: str = environ.get("DATABASE_HOST", "0.0.0.0")
-    Port: int = int(environ.get("DATABASE_PORT", 5432))
-    Name: str = environ.get("DATABASE_NAME", "feeds-db")
-    User: str = environ.get("DATABASE_USER", "docker")
-    Password: str = environ.get("DATABASE_PASSWORD", "")
+    host: str = environ.get("DATABASE_HOST", "0.0.0.0")
+    port: int = environ.get("DATABASE_PORT", 5432)
+    dbname: str = environ.get("DATABASE_NAME", "feeds-db")
+    user: str = environ.get("DATABASE_USER", "docker")
+    password: str = environ.get("DATABASE_PASSWORD", "docker")
+    tableName: str = "public.data_feed"
+
+class DatabaseSource(NamedTuple):
+    host: str = environ.get("SOURCEDATA_HOST", "0.0.0.0")
+    port: int = environ.get("SOURCEDATA_PORT", 5432)
+    dbname: str = environ.get("SOURCEDATA_NAME", "feeds-db")
+    user: str = environ.get("SOURCEDATA_USER", "docker")
+    password: str = environ.get("SOURCEDATA_PASSWORD", "docker")
 
 
 # Config type to contain all definitions of configs

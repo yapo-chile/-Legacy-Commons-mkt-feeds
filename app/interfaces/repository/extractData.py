@@ -2,8 +2,8 @@
 import logging
 import pandas as pd
 from infraestructure.pgsql import rawSqlToDict
-from infraestructure.pgsql import database
-from infraestructure.config import DatabaseConf
+from infraestructure.pgsql import writeDatabase
+from infraestructure.config import Database
 
 
 class extractFeed(object):
@@ -327,6 +327,7 @@ class extractFeed(object):
                 filter_ad_ids,
                 filter_price,
                 group_by)
+        self.log.info('Executing query.')
         data = rawSqlToDict(query)
         self.log.info("Extract Product Feed Successed")
         return data
@@ -335,13 +336,9 @@ class extractFeed(object):
 def getFeedToEndpoint(category=None):
     ef = extractFeed()
     dataDict = ef.extractProductFeed(category)
-    dbConfig = DatabaseConf('ENDPOINT')
-    dbWrite = database(dbConfig['host'],
-                       dbConfig['port'],
-                       dbConfig['dbname'],
-                       dbConfig['user'],
-                       dbConfig['password'])
-    dbWrite.copyStringIterator('dm_analysis.data_feed', dataDict)
+    dbTable = Database()
+    dbWrite = writeDatabase()
+    dbWrite.copyStringIterator(dbTable.tableName, dataDict)
     dbWrite.closeConnection()
 
 
@@ -352,6 +349,6 @@ def mainExtract():
                     4020, 4080,
                     5020, 5040, 5060, 5160,
                     6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180]
-    categoryList = [1220, 1240]
+    categoryList = [6020]
     for category in categoryList:
         getFeedToEndpoint(category)

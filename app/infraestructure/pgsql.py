@@ -5,7 +5,7 @@ from infraestructure.stringIteratorIO import cleanStrValue
 import pandas as pd
 import psycopg2
 import logging
-from infraestructure.config import DatabaseConf
+from infraestructure.config import Database, DatabaseSource
 
 
 
@@ -32,7 +32,12 @@ def rawSqlToDict(query, param=None):
         format [{u'nombre:'valor',N..}]
     """
     try:
-        conn = psycopg2.connect(**DatabaseConf('SOURCEDATA'))
+        dbs = DatabaseSource()
+        conn = psycopg2.connect(user=dbs.user,
+                                password=dbs.password,
+                                host=dbs.host,
+                                port=dbs.port,
+                                database=dbs.dbname)
     except Exception as e:
         exit(e)
     cursor = conn.cursor()
@@ -52,33 +57,27 @@ def rawSqlToDict(query, param=None):
     return result
 
 
-class database(object):
-    def __init__(self, host, port, dbname, user, password):
+class writeDatabase(object):
+    def __init__(self):
         self.log = logging.getLogger('database')
         format = """%(asctime)s,%(msecs)d %(levelname)-2s [%(filename)s:%(lineno)d] %(message)s"""
         logging.basicConfig(format=format,
                             level=logging.INFO)
-        self.host = host
-        self.port = port
-        self.dbname = dbname
-        self.user = user
-        self.password = password
         self.connection = None
         self.getConnection()
 
-    def DatabaseConf(self):
-        return {"host": self.host,
-                "port": self.port,
-                "user": self.user,
-                "password": self.password,
-                "dbname": self.dbname}
-
     def getConnection(self):
-        self.log.info('getConnection DB %s/%s' % (self.host, self.dbname))
-        self.connection = psycopg2.connect(**DatabaseConf('ENDPOINT'))
+        dbw = Database()
+        self.log.info('getConnection DB %s/%s' % (dbw.host, dbw.dbname))
+        self.connection = psycopg2.connect(user='bnbiuser',#dbw.user,
+                                           password='VE1bi@BN112AzLkOP',#dbw.password,
+                                           host='54.144.226.106',#dbw.host,
+                                           port=5432,#dbw.port,
+                                           database='dw_blocketdb_ch')#dbw.dbname)
 
     def executeCommand(self, command):
         self.log.info('executeCommand : %s' % command)
+        Database()
         cursor = self.connection.cursor()
         cursor.execute(command)
         self.connection.commit()
