@@ -2,6 +2,7 @@ import logging
 from flask import Flask
 import domain as d
 import interfaces.handlers as h
+import interfaces.repository.extractData as e
 from infraestructure.config import Config
 
 APP = Flask(__name__)
@@ -28,6 +29,9 @@ def catalog(catalog_id) -> d.JSONType:
                             config=CONFIG,
                             logger=LOGGER).Run()
 
+@app.route('/extractdata', methods=['GET'])
+def prueba():
+    return e.mainExtract()
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

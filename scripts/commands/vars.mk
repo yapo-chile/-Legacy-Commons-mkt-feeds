@@ -42,6 +42,18 @@ export DATABASE_USER=docker
 export DATABASE_PASSWORD=docker
 export PGPASSWORD=${DATABASE_PASSWORD}
 
+export SOURCEDATA_HOST=18.207.59.20
+export SOURCEDATA_PORT=5432
+export SOURCEDATA_NAME=blocketdb
+export SOURCEDATA_USER=bnbiuser
+export SOURCEDATA_PASSWORD=VE1bi@BN112AzLkOP
+
+export ENDPOINT_HOST=54.144.226.106
+export ENDPOINT_PORT=5432
+export ENDPOINT_NAME=dw_blocketdb_ch
+export ENDPOINT_USER=bnbiuser
+export ENDPOINT_PASSWORD=VE1bi@BN112AzLkOP
+
 #LOGGER variables
 export LOGGER_LOG_LEVEL=gunicorn.error
 
