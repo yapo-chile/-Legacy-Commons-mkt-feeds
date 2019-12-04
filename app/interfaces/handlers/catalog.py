@@ -1,8 +1,6 @@
 import io
 import domain as d
-import pandas as pd
-import datetime
-from flask import make_response
+import logging
 from usecases.catalog import CatalogUsecases
 from .handler import Response
 
@@ -20,15 +18,13 @@ class CatalogHandler(CatalogUsecases):
         data = self.get()
         stream = io.StringIO()
         data.to_csv(stream, sep=";")
-
-        r = Response(200)
-        r.toCsv(stream=stream)
-        
         if len(data) > 0:
             self.logger.info('{} rows downloaded from catalog id {}'.format(len(data), self.id))
         else:
             self.logger.info('No rows found for catalog id {}, returning empty file'.format(self.id))
-        return r
+        
+        r = Response(200)
+        return r.toCsv(stream=stream)
 
     @property
     def id(self) -> d.CatalogId:

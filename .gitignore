@@ -8,4 +8,6 @@ share
 pgdata
 .mypy_cache
 man
+.coverage
+coverage
 __pycache__/

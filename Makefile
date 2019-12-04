@@ -38,9 +38,11 @@ build:
 reboot: remove build
 	docker run -d --name ${APPNAME} -p ${SERVER_EXPOSED_PORT}:${SERVER_PORT} ${DOCKER_IMAGE}:${BUILD_TAG}
 
+# Starts app locally
 start-local:
 	python app/app.py
 
+# Run typing tests
 mypy:
 	mypy app/app.py
 
@@ -48,9 +50,15 @@ mypy:
 install:
 	pip install -r app/requirements.txt
 
+# Run tests
 test:
 	cd app && nosetests -v tests/
 
+# Run coverage
+coverage:
+	cd app/tests && coverage run test_healthcheck.py
+
+# shows app info
 info:
 	@echo "YO           	         : ${YO}"
 	@echo "ServerRoot   	         : ${SERVER_ROOT}"
