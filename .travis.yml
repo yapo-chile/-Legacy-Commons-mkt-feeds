@@ -14,7 +14,7 @@ before_script:
 
 script:
   - make install
-  - make test
+  - make tests
   - make build
 
 after_success:

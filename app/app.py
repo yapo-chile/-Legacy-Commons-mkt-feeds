@@ -1,35 +1,34 @@
-from flask import Flask
-from flask import request
-
-import json
 import logging
-import os
-
+from flask import Flask
 import domain as d
 import interfaces.handlers as h
 from infraestructure.config import Config
 
-app = Flask(__name__)
+APP = Flask(__name__)
 
-CONFIG = Config()
+CONFIG: Config = Config()
+
+# Logger initial conf
 LOGGER = logging.getLogger(CONFIG.logger.LogLevel)
+LOGGER.handlers.extend(LOGGER.handlers)
+LOGGER.setLevel(LOGGER.level)
 LOGGER.info(CONFIG)
 
-@app.route("/healthcheck", methods=['GET'])
+
+@APP.route("/healthcheck", methods=['GET'])
 def healthCheck() -> d.JSONType:
+    '''healthCheck route'''
     return h.healthCheckHandler()
 
-@app.route('/catalog/<int:catalog_id>', methods=['GET'])
+
+@APP.route('/catalog/<int:catalog_id>', methods=['GET'])
 def catalog(catalog_id) -> d.JSONType:
+    '''Catalog route'''
     return h.CatalogHandler(d.CatalogId(catalog_id),
                             config=CONFIG,
                             logger=LOGGER).Run()
 
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    app.run(*CONFIG.server, threaded=True)
-else:
-    app.logger.handlers.extend(LOGGER.handlers)
-    app.logger.setLevel(LOGGER.level)
-
-
+    APP.run(*CONFIG.server, threaded=True)

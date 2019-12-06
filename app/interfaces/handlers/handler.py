@@ -2,8 +2,8 @@
 import domain as d
 import datetime
 from http import HTTPStatus
-from types import MappingProxyType
 from flask import make_response, jsonify
+
 
 # Response builds a flask response object depending of its requested type
 class Response():
@@ -11,22 +11,24 @@ class Response():
         self.status = status
 
     # toCsv build a response object to be returned as response json object
-    def toJson(self, msg:d.JSONType, data:d.JSONType=None):
+    def toJson(self, msg: d.JSONType, data: d.JSONType = None):
         template = {
             "message": msg
         }
         if data:
             template['message'].update({"data": data})
-        template = MappingProxyType(template)
         response = make_response(template['message'], self.status)
         response.headers['Content-Type'] = 'application/json'
-        response.headers['Access-Control-Allow-Origin'] ='*'
+        response.headers['Access-Control-Allow-Origin'] = '*'
         return response
-    
-    # toCsv build a response object to be returned as response stream csv object
-    def toCsv(self, stream, filename:str="export"):
+
+    # toCsv build a response object to be returned as response stream csv
+    # object
+    def toCsv(self, stream, filename: str = "export"):
         response = make_response(stream.getvalue())
-        response.headers["Content-Disposition"] = "attachment; filename={}{}.csv".format(filename, datetime.datetime.now())
+        response.headers["Content-Disposition"] = \
+            "attachment; filename={}{}.csv".format(
+            filename, datetime.datetime.now())
         response.headers["Content-type"] = "text/csv"
         return response
 

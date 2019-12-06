@@ -44,6 +44,7 @@ start-local:
 
 # Run typing tests
 mypy:
+## Requires mypy
 	mypy app/app.py
 
 # Installs libraries locally
@@ -52,11 +53,30 @@ install:
 
 # Run tests
 test:
+## Requires nose
 	cd app && nosetests -v tests/
 
-# Run coverage
-coverage:
-	cd app/tests && coverage run test_healthcheck.py
+# Run codestyle lint
+## Requires pycodestyle
+check-style:
+	pycodestyle app/
+
+# Run code pep8 formater
+## requires autopep8
+auto-format:
+	autopep8 --in-place --aggressive --aggressive -r app/
+
+# Run pylint code static checker
+## requires pylint
+pylint:
+	pylint app/*.py app/**/*.py
+
+# Run lints to generate report
+lints:
+	@scripts/commands/lints.sh
+
+# runs all related test to check app
+tests: test check-style pylint lints
 
 # shows app info
 info:

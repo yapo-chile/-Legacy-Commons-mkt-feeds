@@ -1,17 +1,10 @@
-import domain as d
-import pandas as pd
+import pandas as pd  # type: ignore
 from interfaces.repository.catalogRepo import CatalogRepo
 
+
+# CatalogUsecases receives a catalog id and if valid returns a size-fixed
+# data matrix.
 class CatalogUsecases(CatalogRepo):
-    """
-    Receives a catalog id and if valid returns a size-fixed data matrix.
 
-    Parameters
-    ----------
-    id : domain type CatalogId
-
-    """
-    def get(self) -> pd.DataFrame():
+    def get(self) -> pd.DataFrame():  # type: ignore
         return self.getCatalog()
-
-

@@ -1,0 +1,14 @@
+{
+    "Actions": [
+      {
+        "Name": "CheckStyle",
+        "Matcher": {
+          "Name": "RegexpFilePathMatcher",
+          "Args": ["reports\\/checkstyle-report.xml"  ]
+        },
+        "Publisher": {
+          "Name": "FilePublisher",
+          "Args": ["checkstyle", "xml"]
+        }
+      }]
+  }

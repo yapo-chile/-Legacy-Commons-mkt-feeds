@@ -10,4 +10,5 @@ pgdata
 man
 .coverage
 coverage
+reports/checkstyle-report.xml
 __pycache__/

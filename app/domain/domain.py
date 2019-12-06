@@ -1,5 +1,4 @@
-from typing import Any, List, Dict, NewType
-from infraestructure.config import Config
+from typing import Any, Dict, NewType
 
 # Json format
 JSONType = NewType("JSONType", Dict[str, Any])

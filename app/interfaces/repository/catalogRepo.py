@@ -1,14 +1,14 @@
 import domain as d
-import pandas as pd
-from infraestructure.pgsql import Pgsql
+import pandas as pd  # type: ignore
+from infraestructure.pgsql import Pgsql  # type: ignore
 from infraestructure.catalog import CatalogConf
 
 
 class CatalogRepo():
 
     def __init__(self) -> None:
-        self.catalog:pd.DataFrame = pd.DataFrame([])
-    
+        self.catalog: pd.DataFrame = pd.DataFrame([])
+
     def _parseParams(self) -> str:
         # Translate Condition
         def translateCondition(condition):
@@ -37,21 +37,21 @@ class CatalogRepo():
 
     def _getData(self) -> None:
         self.catalog = Pgsql().execute(self._getParams())
-    
+
     def _applyFields(self) -> None:
         if len(self.config["fields"]) > 0:
             self.catalog = self.catalog.rename(columns=self.config["fields"])
-    
+
     def _applyCreateColumn(self) -> None:
         if len(self.config["create_column"]) > 0:
             for k, v in self.config["create_column"].items():
                 self.catalog[k] = self.catalog.eval(v)
-        
+
     def getCatalog(self) -> pd.DataFrame:
-        self.config = CatalogConf().get(self.id)
+        self.config = CatalogConf().get(self.id)  # type: ignore
         if len(self.config) > 0:
             self._getData()
             self._applyCreateColumn()
             self._applyFields()
-        #print(self.catalog)
+        # print(self.catalog)
         return self.catalog

@@ -1,4 +1,6 @@
+# type: ignore
 import pandas as pd
+
 
 class Pgsql():
     def execute(self, params: str) -> pd.DataFrame:
