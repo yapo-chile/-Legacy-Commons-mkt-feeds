@@ -2,7 +2,6 @@ import logging
 from flask import Flask
 import domain as d
 import interfaces.handlers as h
-import interfaces.repository.extractData as e
 from infraestructure.config import Config
 
 APP = Flask(__name__)
