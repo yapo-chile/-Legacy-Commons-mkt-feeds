@@ -33,12 +33,18 @@ def rawSqlToDict(query, param=None):
     """
     try:
         dbs = DatabaseSource()
+        print(dbs.host)
+        print(dbs.port)
+        print(dbs.user)
+        print(dbs.password)
+        print(dbs.dbname)
         conn = psycopg2.connect(user=dbs.user,
                                 password=dbs.password,
                                 host=dbs.host,
                                 port=dbs.port,
                                 database=dbs.dbname)
     except Exception as e:
+        print(e)
         exit(e)
     cursor = conn.cursor()
     conn.set_client_encoding('UTF-8')
@@ -69,11 +75,11 @@ class writeDatabase(object):
     def getConnection(self):
         dbw = Database()
         self.log.info('getConnection DB %s/%s' % (dbw.host, dbw.dbname))
-        self.connection = psycopg2.connect(user='bnbiuser',#dbw.user,
-                                           password='VE1bi@BN112AzLkOP',#dbw.password,
-                                           host='54.144.226.106',#dbw.host,
-                                           port=5432,#dbw.port,
-                                           database='dw_blocketdb_ch')#dbw.dbname)
+        self.connection = psycopg2.connect(user=dbw.user,
+                                           password=dbw.password,
+                                           host=dbw.host,
+                                           port=dbw.port,
+                                           database=dbw.dbname)
 
     def executeCommand(self, command):
         self.log.info('executeCommand : %s' % command)

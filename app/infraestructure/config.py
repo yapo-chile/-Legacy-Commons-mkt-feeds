@@ -28,7 +28,7 @@ class Database(NamedTuple):
 
 class DatabaseSource(NamedTuple):
     host: str = environ.get("SOURCEDATA_HOST", "0.0.0.0")
-    port: int = environ.get("SOURCEDATA_PORT", 5432)
+    port: int = environ.get("SOURCEDATA_PORT", "5432")
     dbname: str = environ.get("SOURCEDATA_NAME", "feeds-db")
     user: str = environ.get("SOURCEDATA_USER", "docker")
     password: str = environ.get("SOURCEDATA_PASSWORD", "docker")

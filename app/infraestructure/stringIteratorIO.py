@@ -1,18 +1,17 @@
 from typing import Iterator, Dict, Any, Optional
-from io import StringIO
 import io
 
 
+"""
+Class that tansform a large dictionary to String.
+"""
 class StringIteratorIO(io.TextIOBase):
 
     def __init__(self, iter: Iterator[str]):
         self._iter = iter
         self._buff = ''
 
-    def readable(self) -> bool:
-        return True
-
-    def _read1(self, n: Optional[int] = None) -> str:
+    def _getLargeStr(self, n: Optional[int] = None) -> str:
         while not self._buff:
             try:
                 self._buff = next(self._iter)
@@ -26,13 +25,13 @@ class StringIteratorIO(io.TextIOBase):
         line = []
         if n is None or n < 0:
             while True:
-                m = self._read1()
+                m = self._getLargeStr()
                 if not m:
                     break
                 line.append(m)
         else:
             while n > 0:
-                m = self._read1(n)
+                m = self._getLargeStr(n)
                 if not m:
                     break
                 n -= len(m)
