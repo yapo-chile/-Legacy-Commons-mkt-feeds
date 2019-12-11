@@ -1,14 +1,14 @@
-from typing import Iterator, Dict, Any, Optional
+from typing import Iterator, Any, Optional
 import io
 
 
-"""
-Class that tansform a large dictionary to String.
-"""
 class StringIteratorIO(io.TextIOBase):
+    """
+    Class that tansform a large dictionary to String.
+    """
 
-    def __init__(self, iter: Iterator[str]):
-        self._iter = iter
+    def __init__(self, iterat: Iterator[str]):
+        self._iter = iterat
         self._buff = ''
 
     def _getLargeStr(self, n: Optional[int] = None) -> str:

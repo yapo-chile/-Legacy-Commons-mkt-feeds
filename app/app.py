@@ -28,7 +28,7 @@ def catalog(catalog_id) -> d.JSONType:
                             config=CONFIG,
                             logger=LOGGER).Run()
 
-@app.route('/dataExtractor', methods=['GET'])
+@APP.route('/dataExtractor', methods=['GET'])
 def dataExtractor() -> d.JSONType:
     return h.dataExtractor.RunExtractData()
 

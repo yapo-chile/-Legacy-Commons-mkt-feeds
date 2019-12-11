@@ -31,21 +31,12 @@ def rawSqlToDict(query, param=None):
     Dict
         format [{u'nombre:'valor',N..}]
     """
-    try:
-        dbs = DatabaseSource()
-        print(dbs.host)
-        print(dbs.port)
-        print(dbs.user)
-        print(dbs.password)
-        print(dbs.dbname)
-        conn = psycopg2.connect(user=dbs.user,
-                                password=dbs.password,
-                                host=dbs.host,
-                                port=dbs.port,
-                                database=dbs.dbname)
-    except Exception as e:
-        print(e)
-        exit(e)
+    dbs = DatabaseSource()
+    conn = psycopg2.connect(user=dbs.user,
+                            password=dbs.password,
+                            host=dbs.host,
+                            port=dbs.port,
+                            database=dbs.dbname)
     cursor = conn.cursor()
     conn.set_client_encoding('UTF-8')
     cursor.execute(query, param)
@@ -66,15 +57,16 @@ def rawSqlToDict(query, param=None):
 class writeDatabase(object):
     def __init__(self):
         self.log = logging.getLogger('database')
-        format = """%(asctime)s,%(msecs)d %(levelname)-2s [%(filename)s:%(lineno)d] %(message)s"""
-        logging.basicConfig(format=format,
-                            level=logging.INFO)
+        date_format = """%(asctime)s,%(msecs)d %(levelname)-2s """
+        info_format = """[%(filename)s:%(lineno)d] %(message)s"""
+        log_format = date_format + info_format
+        logging.basicConfig(format=log_format, level=logging.INFO)
         self.connection = None
         self.getConnection()
 
     def getConnection(self):
         dbw = Database()
-        self.log.info('getConnection DB %s/%s' % (dbw.host, dbw.dbname))
+        self.log.info('getConnection DB %s/%s', dbw.host, dbw.dbname)
         self.connection = psycopg2.connect(user=dbw.user,
                                            password=dbw.password,
                                            host=dbw.host,
@@ -82,7 +74,7 @@ class writeDatabase(object):
                                            database=dbw.dbname)
 
     def executeCommand(self, command):
-        self.log.info('executeCommand : %s' % command)
+        self.log.info('executeCommand : %s', command)
         Database()
         cursor = self.connection.cursor()
         cursor.execute(command)
@@ -90,7 +82,7 @@ class writeDatabase(object):
         cursor.close()
 
     def copyStringIterator(self, tableName, dataDict: Iterator[Dict[str, Any]]) -> None:
-        self.log.info('copyStringIterator init CURSOR %s.' % tableName)
+        self.log.info('copyStringIterator init CURSOR %s.', tableName)
         with self.connection.cursor() as cursor:
             stringData = StringIteratorIO((
                 '|'.join(map(cleanCsvValue, (
@@ -120,7 +112,7 @@ class writeDatabase(object):
             cursor.copy_from(stringData, tableName, sep='|')
             self.log.info('copyStringIterator COMMIT.')
             self.connection.commit()
-            self.log.info('Close cursor %s' % tableName)
+            self.log.info('Close cursor %s', tableName)
             cursor.close()
 
     def closeConnection(self):

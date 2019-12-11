@@ -1,5 +1,4 @@
 import json
-import os
 from os import environ
 from typing import NamedTuple
 
@@ -32,7 +31,6 @@ class DatabaseSource(NamedTuple):
     dbname: str = environ.get("SOURCEDATA_NAME", "feeds-db")
     user: str = environ.get("SOURCEDATA_USER", "docker")
     password: str = environ.get("SOURCEDATA_PASSWORD", "docker")
-
 
 # Config type to contain all definitions of configs
 class Config(NamedTuple):
