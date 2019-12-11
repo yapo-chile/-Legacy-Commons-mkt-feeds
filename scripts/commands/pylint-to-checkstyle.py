@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # <?xml version="1.0" encoding="UTF-8"?>
 # <checkstyle version="5.0">
-#    <file name="hygiene/checks/__init__.py">
-#       <error column="0" line="5" message="Wildcard import hygiene.checks.github" severity="error" source="pylint" />
-#       <error column="0" line="6" message="Wildcard import hygiene.checks.engprod" severity="error" source="pylint" />
-#       <error column="0" line="7" message="Wildcard import hygiene.checks.travis" severity="error" source="pylint" />
-#       <error column="0" line="8" message="Wildcard import hygiene.checks.golang" severity="error" source="pylint" />
-#       <error column="0" line="9" message="Wildcard import hygiene.checks.ownership" severity="error" source="pylint" />
-#    </file>
 # </checkstyle>
 
 import sys

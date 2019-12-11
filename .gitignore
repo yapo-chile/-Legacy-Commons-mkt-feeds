@@ -8,7 +8,5 @@ share
 pgdata
 .mypy_cache
 man
-.coverage
-coverage
 reports/checkstyle-report.xml
 __pycache__/
