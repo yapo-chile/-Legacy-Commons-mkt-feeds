@@ -2,10 +2,11 @@ from typing import Iterator, Dict, Any, Optional
 from infraestructure.stringIteratorIO import StringIteratorIO
 from infraestructure.stringIteratorIO import cleanCsvValue
 from infraestructure.stringIteratorIO import cleanStrValue
+from infraestructure.config import Database, DatabaseSource
 import pandas as pd
 import psycopg2
 import logging
-from infraestructure.config import Database, DatabaseSource
+
 
 
 
