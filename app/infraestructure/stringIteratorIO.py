@@ -1,8 +1,7 @@
 from typing import Iterator, Any, Optional
-import io
 
 
-class StringIteratorIO(io.TextIOBase):
+class StringIteratorIO:
     """
     Class that tansform a large dictionary to String.
     """

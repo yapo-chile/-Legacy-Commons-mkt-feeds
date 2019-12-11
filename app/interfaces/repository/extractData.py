@@ -147,7 +147,8 @@ class extractFeed(object):
         if (category is None):
             return
 
-        filter_additional_category, filter_price, group_by = self.filterCategory(category)
+        filter_additional_category, \
+            filter_price, group_by = self.filterCategory(category)
 
         filter_uniq_category = " and category in ( " + str(category) + " ) "
 
@@ -338,7 +339,7 @@ def getFeedToEndpoint(category=None):
     dataDict = ef.extractProductFeed(category)
     dbTable = Database()
     dbWrite = writeDatabase()
-    dbWrite.copyStringIterator(dbTable.tableName, dataDict)
+    dbWrite.copyStringIter(dbTable.tableName, dataDict)
     dbWrite.closeConnection()
 
 

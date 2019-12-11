@@ -1,13 +1,11 @@
-from typing import Iterator, Dict, Any, Optional
+from typing import Iterator, Dict, Any
+import logging
+import pandas as pd
+import psycopg2
 from infraestructure.stringIteratorIO import StringIteratorIO
 from infraestructure.stringIteratorIO import cleanCsvValue
 from infraestructure.stringIteratorIO import cleanStrValue
 from infraestructure.config import Database, DatabaseSource
-import pandas as pd
-import psycopg2
-import logging
-
-
 
 
 class Pgsql():
@@ -55,7 +53,7 @@ def rawSqlToDict(query, param=None):
     return result
 
 
-class writeDatabase(object):
+class writeDatabase:
     def __init__(self):
         self.log = logging.getLogger('database')
         date_format = """%(asctime)s,%(msecs)d %(levelname)-2s """
@@ -82,7 +80,7 @@ class writeDatabase(object):
         self.connection.commit()
         cursor.close()
 
-    def copyStringIterator(self, tableName, dataDict: Iterator[Dict[str, Any]]) -> None:
+    def copyStringIter(self, tableName, dataDict: Iterator[Dict[str, Any]]):
         self.log.info('copyStringIterator init CURSOR %s.', tableName)
         with self.connection.cursor() as cursor:
             stringData = StringIteratorIO((
