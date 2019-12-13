@@ -29,6 +29,11 @@ def catalog(catalog_id) -> d.JSONType:
                             logger=LOGGER).Run()
 
 
+@APP.route('/dataExtractor', methods=['GET'])
+def dataExtractor() -> d.JSONType:
+    return h.dataExtractor.RunExtractData()
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     APP.run(*CONFIG.server, threaded=True)

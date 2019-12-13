@@ -42,6 +42,12 @@ export DATABASE_USER=docker
 export DATABASE_PASSWORD=docker
 export PGPASSWORD=${DATABASE_PASSWORD}
 
+export SOURCEDATA_HOST=0.0.0.0
+export SOURCEDATA_PORT=5432
+export SOURCEDATA_NAME=dbname
+export SOURCEDATA_USER=user
+export SOURCEDATA_PASSWORD=secret
+
 #LOGGER variables
 export LOGGER_LOG_LEVEL=gunicorn.error
 
