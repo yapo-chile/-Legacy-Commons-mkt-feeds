@@ -7,9 +7,8 @@ from typing import NamedTuple
 class Logger(NamedTuple):
     LogLevel: str = environ.get("LOGGER_LOG_LEVEL", "gunicorn.error")
 
+
 # Server tuple that contains all definitions for server init
-
-
 class Server(NamedTuple):
     Host: str = environ.get("SERVER_HOST", "0.0.0.0")
     Port: int = int(environ.get("SERVER_PORT", 5000))
