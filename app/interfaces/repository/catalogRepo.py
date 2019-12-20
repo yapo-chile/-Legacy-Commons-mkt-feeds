@@ -29,6 +29,29 @@ class CatalogRepo():
             query += " {field} {condition} {value} {union}".format(**p)
         return query
 
+    def _getQueryCatalog(self) -> str:
+        query = """
+            select ad_id::int,
+            ad_insertion,
+            REPLACE(name,';','') as name,
+            image_url,
+            main_category,
+            category,
+            REPLACE(description,';','') as description,
+            price::bigint,
+            region,
+            url,
+            condition,
+            ios_url,
+            ios_app_store_id::int,
+            ios_app_name,
+            android_url,
+            android_package,
+            android_app_name,
+            num_ad_replies::int
+            from data_feed;"""
+        return query
+
     def _getParams(self) -> str:
         query = ""
         if self.config["params"] is not []:
@@ -36,14 +59,15 @@ class CatalogRepo():
         return query
 
     def _getData(self) -> None:
-        self.catalog = Pgsql().execute(self._getParams())
+        self.catalog = Pgsql().select(query=self._getQueryCatalog())
+        self.catalog = self.catalog.query(self._getParams())
 
     def _applyFields(self) -> None:
         if len(self.config["fields"]) > 0:
             self.catalog = self.catalog.rename(columns=self.config["fields"])
 
     def _applyCreateColumn(self) -> None:
-        if len(self.config["create_column"]) > 0:
+        if "create_column" in self.config:
             for k, v in self.config["create_column"].items():
                 self.catalog[k] = self.catalog.eval(v)
 
@@ -53,5 +77,4 @@ class CatalogRepo():
             self._getData()
             self._applyCreateColumn()
             self._applyFields()
-        # print(self.catalog)
         return self.catalog

@@ -43,6 +43,7 @@ services:
     container_name: feeds-db
     volumes:
       - "./pgdata:/var/lib/postgresql/data/pgdata"
+      - "./app/scripts/structure.sql:/docker-entrypoint-initdb.d/1-structure.sql"
     ports:
       - "${DATABASE_PORT}:5432"
     environment:

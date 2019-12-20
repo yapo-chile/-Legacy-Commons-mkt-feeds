@@ -1,6 +1,6 @@
 # coding=utf-8
 import logging
-import pandas as pd
+import pandas as pd  # type: ignore
 from infraestructure.pgsql import rawSqlToDict
 from infraestructure.pgsql import writeDatabase
 from infraestructure.config import Database

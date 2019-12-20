@@ -76,7 +76,7 @@ lints:
 	@scripts/commands/lints.sh
 
 # runs all related test to check app
-tests: test check-style lints
+tests: check-style lints
 
 # shows app info
 info:

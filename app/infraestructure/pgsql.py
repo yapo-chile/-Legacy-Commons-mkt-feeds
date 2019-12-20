@@ -1,19 +1,32 @@
 from typing import Iterator, Dict, Any
 import logging
-import pandas as pd
-import psycopg2
-from infraestructure.stringIteratorIO import StringIteratorIO
-from infraestructure.stringIteratorIO import cleanCsvValue
-from infraestructure.stringIteratorIO import cleanStrValue
+import pandas as pd  # type: ignore
+import psycopg2  # type: ignore
+from psycopg2 import pool
+from contextlib import contextmanager
+from infraestructure.stringIteratorIO import StringIteratorIO,\
+    cleanCsvValue, cleanStrValue
 from infraestructure.config import Database, DatabaseSource
 
+db_conf = Database()
+DB_POOL = psycopg2.pool.SimpleConnectionPool(1, 10,
+                                             user=db_conf.user,
+                                             password=db_conf.password,
+                                             host=db_conf.host,
+                                             port=db_conf.port,
+                                             database=db_conf.dbname)
 
-class Pgsql():
-    def execute(self, params: str) -> pd.DataFrame:
-        data = pd.DataFrame({'year': [2017, 2014, 2018, 2019],
-                             'category': [2, 5, 3, 2],
-                             'region': [10, 2, 1, 8]})
-        return data.query(params)
+
+@contextmanager
+def db():
+    conn = DB_POOL.getconn()
+    conn.set_client_encoding('UTF-8')
+    cur = conn.cursor()
+    try:
+        yield conn, cur
+    finally:
+        cur.close()
+        DB_POOL.putconn(conn)
 
 
 def rawSqlToDict(query, param=None):
@@ -51,6 +64,17 @@ def rawSqlToDict(query, param=None):
     conn.close()
     # Return results
     return result
+
+
+class Pgsql():
+
+    def select(self, query: str) -> pd.DataFrame:
+        with db() as (conn, cursor):
+            cursor.execute(query)
+            data = pd.DataFrame(cursor.fetchall())
+            data.columns = [name[0] for name in cursor.description]
+            cursor.close()
+            return data
 
 
 class writeDatabase:

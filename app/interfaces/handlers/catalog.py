@@ -1,6 +1,7 @@
 import io
 import domain as d
 import logging
+import numpy as np  # type: ignore
 from usecases.catalog import CatalogUsecases
 from .handler import Response
 
@@ -22,7 +23,11 @@ class CatalogHandler(CatalogUsecases):
     def Run(self):
         data = self.get()
         stream = io.StringIO()
-        data.to_csv(stream, sep=";")
+        np.savetxt(stream,
+                   data.values,
+                   delimiter=";",
+                   fmt="%s",
+                   header=";".join(data.columns.values))
         if len(data) > 0:
             self.logger.info(
                 '{} rows downloaded from catalog id {}'.format(
