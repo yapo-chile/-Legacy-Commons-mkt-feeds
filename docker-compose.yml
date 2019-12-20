@@ -32,9 +32,7 @@ services:
       SOURCEDATA_USER: ${SOURCEDATA_USER}
       SOURCEDATA_PASSWORD: ${SOURCEDATA_PASSWORD}
   proxy:
-    build:
-      context:  ./nginx
-      dockerfile: Dockerfile
+    image: ${DOCKER_IMAGE_PROXY_COMPOSE}
     container_name: feeds-proxy
     ports:
       - "${NGINX_EXPOSED_PORT}:${NGINX_PORT}"

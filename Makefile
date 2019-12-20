@@ -1,17 +1,20 @@
 include scripts/commands/vars.mk
 
 ## Deletes all containers
-docker-remove:
+docker-remove: docker-stop
 	docker-compose rm -f
 
 ## Stops all containers
 docker-stop:
 	docker-compose stop
 
+## Push gateway and db images to local registry
+docker-push-local:
+	@scripts/commands/docker-local-registry.sh
+
 ## Compiles all the services
-docker-build: build
-	docker-compose build
-	#--no-cache
+docker-build: build build-proxy
+	docker-compose build --no-cache
 
 ## Compile and start the service using docker
 compose-up: docker-build
@@ -33,6 +36,10 @@ remove:
 ## Compile and start the service
 build:
 	@scripts/commands/docker-build.sh
+
+## Compile and start proxy service
+build-proxy:
+	@scripts/commands/docker-build-proxy.sh
 
 ## Compile and start the service using docker
 reboot: remove build

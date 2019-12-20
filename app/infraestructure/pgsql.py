@@ -6,9 +6,9 @@ from psycopg2 import pool
 from contextlib import contextmanager
 from infraestructure.stringIteratorIO import StringIteratorIO,\
     cleanCsvValue, cleanStrValue
-from infraestructure.config import Database, DatabaseSource
+from infraestructure import config
 
-db_conf = Database()
+db_conf = config.Database()
 DB_POOL = psycopg2.pool.SimpleConnectionPool(1, 10,
                                              user=db_conf.user,
                                              password=db_conf.password,
@@ -43,7 +43,7 @@ def rawSqlToDict(query, param=None):
     Dict
         format [{u'nombre:'valor',N..}]
     """
-    dbs = DatabaseSource()
+    dbs = config.DatabaseSource()
     conn = psycopg2.connect(user=dbs.user,
                             password=dbs.password,
                             host=dbs.host,
@@ -73,7 +73,6 @@ class Pgsql():
             cursor.execute(query)
             data = pd.DataFrame(cursor.fetchall())
             data.columns = [name[0] for name in cursor.description]
-            cursor.close()
             return data
 
 
@@ -88,7 +87,7 @@ class writeDatabase:
         self.getConnection()
 
     def getConnection(self):
-        dbw = Database()
+        dbw = config.Database()
         self.log.info('getConnection DB %s/%s', dbw.host, dbw.dbname)
         self.connection = psycopg2.connect(user=dbw.user,
                                            password=dbw.password,
@@ -98,7 +97,6 @@ class writeDatabase:
 
     def executeCommand(self, command):
         self.log.info('executeCommand : %s', command)
-        Database()
         cursor = self.connection.cursor()
         cursor.execute(command)
         self.connection.commit()

@@ -52,9 +52,11 @@ export SOURCEDATA_PASSWORD=secret
 export LOGGER_LOG_LEVEL=gunicorn.error
 
 #DOCKER variables for app
+export LOCAL_REGISTRY=registry01.msf.yapo.cl
 export DOCKER_REGISTRY=containers.mpi-internal.com
 export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
-export DOCKER_IMAGE_COMPOSE=${DOCKER_REGISTRY}/yapo/${APPNAME}:${GIT_BRANCH}
+export DOCKER_IMAGE_COMPOSE=${DOCKER_IMAGE}:${GIT_BRANCH}
+export DOCKER_IMAGE_PROXY_COMPOSE=${DOCKER_IMAGE}-proxy:${GIT_BRANCH}
 export DOCKER_GATEWAY_PORT=$(call genport,4)
 export DOCKER_CONTAINER_NAME=${APPNAME}-core
 
