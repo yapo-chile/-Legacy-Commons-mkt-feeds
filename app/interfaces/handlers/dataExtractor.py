@@ -1,11 +1,15 @@
 import io
 import domain as d
 import logging
+from multiprocessing import Process
 from .handler import Response
 from interfaces.repository.extractData import mainExtract
 
 
-def RunExtractData():
-    mainExtract()
-    r = Response(200)
-    return r.toJson(msg=d.JSONType({"status": "Load data OK"}))
+def runExtractData():
+    p = Process(target=mainExtract)
+    p.daemon = True
+    p.start()
+    p.join()
+    r = Response(202)
+    return r.toJson(msg=d.JSONType({"status": "Load process started"}))

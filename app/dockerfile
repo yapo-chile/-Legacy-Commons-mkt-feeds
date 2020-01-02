@@ -2,6 +2,8 @@ FROM python:3.7.2-slim
 COPY . /app
 WORKDIR /app
 
+ENV PS1="\[\e[1;32m\]$APPNAME \[\e[1;31m\][`pwd`] # \[\e[0m\]"
+ 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc build-essential \
     && rm -rf /var/lib/apt/lists/* \

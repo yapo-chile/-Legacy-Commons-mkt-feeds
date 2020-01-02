@@ -5,7 +5,6 @@ import interfaces.handlers as h
 from infraestructure.config import Config
 
 APP = Flask(__name__)
-
 CONFIG: Config = Config()
 
 # Logger initial conf
@@ -21,17 +20,23 @@ def healthCheck() -> d.JSONType:
     return h.healthCheckHandler()
 
 
-@APP.route('/catalog/<int:catalog_id>', methods=['GET'])
+@APP.route('/catalog/create/<int:catalog_id>', methods=['GET'])
 def catalog(catalog_id) -> d.JSONType:
     '''Catalog route'''
     return h.CatalogHandler(d.CatalogId(catalog_id),
                             config=CONFIG,
                             logger=LOGGER).Run()
 
+@APP.route('/catalog/get/<int:catalog_id>', methods=['GET'])
+def catalog(catalog_id) -> d.JSONType:
+    '''Catalog route'''
+    return h.CatalogHandler(d.CatalogId(catalog_id),
+                            config=CONFIG,
+                            logger=LOGGER).Run()
 
 @APP.route('/refresh', methods=['GET'])
 def dataExtractor() -> d.JSONType:
-    return h.dataExtractor.RunExtractData()
+    return h.dataExtractor.runExtractData()
 
 
 if __name__ == "__main__":

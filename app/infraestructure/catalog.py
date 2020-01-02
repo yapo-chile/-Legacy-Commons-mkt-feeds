@@ -9,7 +9,7 @@ class CatalogConf():
             config = {
                 "params": [
                     {"field": "price", "condition": "higher",
-                     "value": 0, "union": ""},
+                     "value": 10000000, "union": ""},
                     # {"field": "price", "condition": "lower_than",
                     # "value": 4000000, "union": ""},
                     # {"field": "category", "condition": "equal",

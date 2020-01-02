@@ -21,7 +21,7 @@ compose-up: docker-build
 	docker-compose up -d
 
 start: compose-up info
-	##--scale -d suggester=4 
+	##--scale -d core=4 
 
 ## Publishes container
 docker-publish:
