@@ -8,5 +8,6 @@ share
 pgdata
 .mypy_cache
 man
+tmp/*
 reports/checkstyle-report.xml
 __pycache__/

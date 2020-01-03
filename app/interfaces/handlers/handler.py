@@ -2,7 +2,7 @@
 import domain as d
 import datetime
 from http import HTTPStatus
-from flask import make_response, jsonify
+from flask import make_response, jsonify, send_file
 
 
 # Response builds a flask response object depending of its requested type
@@ -24,12 +24,11 @@ class Response():
 
     # toCsv build a response object to be returned as response stream csv
     # object
-    def toCsv(self, stream, filename: str = "export"):
-        response = make_response(stream.getvalue())
-        response.headers["Content-Disposition"] = \
-            "attachment; filename={}{}.csv".format(
-            filename, datetime.datetime.now())
-        response.headers["Content-type"] = "text/csv"
+    def toCsv(self, file, filename):
+        response = send_file(file,
+                     mimetype='text/csv',
+                     attachment_filename=filename,
+                     as_attachment=True)
         return response
 
     # status getter

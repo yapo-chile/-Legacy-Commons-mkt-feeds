@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 import pandas as pd  # type: ignore
+import threading
 from infraestructure.pgsql import rawSqlToDict
 from infraestructure.pgsql import writeDatabase
 from infraestructure.config import Database
@@ -352,3 +353,8 @@ def mainExtract():
                     6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180]
     for category in categoryList:
         getFeedToEndpoint(category)
+
+
+def generate():
+    t = threading.Thread(target=mainExtract)
+    t.start()

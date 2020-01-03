@@ -8,8 +8,8 @@ class CatalogConf():
         if catalogId == 1:
             config = {
                 "params": [
-                    {"field": "price", "condition": "higher",
-                     "value": 10000000, "union": ""},
+                    {"field": "price", "condition": "higher_than",
+                     "value": 0, "union": ""},
                     # {"field": "price", "condition": "lower_than",
                     # "value": 4000000, "union": ""},
                     # {"field": "category", "condition": "equal",

@@ -21,18 +21,18 @@ def healthCheck() -> d.JSONType:
 
 
 @APP.route('/catalog/create/<int:catalog_id>', methods=['GET'])
-def catalog(catalog_id) -> d.JSONType:
+def catalogCreate(catalog_id) -> d.JSONType:
     '''Catalog route'''
     return h.CatalogHandler(d.CatalogId(catalog_id),
                             config=CONFIG,
-                            logger=LOGGER).Run()
+                            logger=LOGGER).create()
 
 @APP.route('/catalog/get/<int:catalog_id>', methods=['GET'])
-def catalog(catalog_id) -> d.JSONType:
+def catalogGet(catalog_id) -> d.JSONType:
     '''Catalog route'''
     return h.CatalogHandler(d.CatalogId(catalog_id),
                             config=CONFIG,
-                            logger=LOGGER).Run()
+                            logger=LOGGER).get()
 
 @APP.route('/refresh', methods=['GET'])
 def dataExtractor() -> d.JSONType:
