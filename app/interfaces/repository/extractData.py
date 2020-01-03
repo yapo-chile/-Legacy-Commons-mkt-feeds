@@ -8,7 +8,8 @@ from infraestructure.config import Database
 
 
 class extractFeed(object):
-
+    # extractFeed reads a ads source providers db and insert them
+    # in app db
     def __init__(self):
         self.log = logging.getLogger('extractData')
 

@@ -26,9 +26,9 @@ class Response():
     # object
     def toCsv(self, file, filename):
         response = send_file(file,
-                     mimetype='text/csv',
-                     attachment_filename=filename,
-                     as_attachment=True)
+                             mimetype='text/csv',
+                             attachment_filename=filename,
+                             as_attachment=True)
         return response
 
     # status getter

@@ -15,9 +15,9 @@ LOGGER.info(CONFIG)
 
 
 @APP.route("/healthcheck", methods=['GET'])
-def healthCheck() -> d.JSONType:
+def healthcheck() -> d.JSONType:
     '''healthCheck route'''
-    return h.healthCheckHandler()
+    return h.healthcheckHandler()
 
 
 @APP.route('/catalog/create/<int:catalog_id>', methods=['GET'])
@@ -27,12 +27,14 @@ def catalogCreate(catalog_id) -> d.JSONType:
                             config=CONFIG,
                             logger=LOGGER).create()
 
+
 @APP.route('/catalog/get/<int:catalog_id>', methods=['GET'])
 def catalogGet(catalog_id) -> d.JSONType:
     '''Catalog route'''
     return h.CatalogHandler(d.CatalogId(catalog_id),
                             config=CONFIG,
                             logger=LOGGER).get()
+
 
 @APP.route('/refresh', methods=['GET'])
 def dataExtractor() -> d.JSONType:

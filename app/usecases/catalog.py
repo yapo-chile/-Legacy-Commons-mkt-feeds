@@ -23,7 +23,7 @@ class CatalogUsecases(CatalogRepo):
                 'No rows found for catalog id {}, returning empty file'.format(
                     self.id))
         return True
-        
+
     def create(self) -> bool:
         t = threading.Thread(target=self.generate)
         t.start()

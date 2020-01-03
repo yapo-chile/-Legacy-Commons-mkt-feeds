@@ -5,7 +5,6 @@ from infraestructure.catalog import CatalogConf
 
 
 class CatalogRepo():
-
     def __init__(self) -> None:
         self.catalog: pd.DataFrame = pd.DataFrame([])
 
