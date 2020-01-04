@@ -8,13 +8,13 @@ from infraestructure.stringIteratorIO import StringIteratorIO,\
     cleanCsvValue, cleanStrValue
 from infraestructure import config
 
-db_conf = config.Database()
+DB_CONF = config.Database()
 DB_POOL = psycopg2.pool.SimpleConnectionPool(1, 10,
-                                             user=db_conf.user,
-                                             password=db_conf.password,
-                                             host=db_conf.host,
-                                             port=db_conf.port,
-                                             database=db_conf.dbname)
+                                             user=DB_CONF.user,
+                                             password=DB_CONF.password,
+                                             host=DB_CONF.host,
+                                             port=DB_CONF.port,
+                                             database=DB_CONF.dbname)
 
 
 @contextmanager
@@ -74,6 +74,13 @@ class Pgsql():
             data = pd.DataFrame(cursor.fetchall())
             data.columns = [name[0] for name in cursor.description]
             return data
+
+    def truncate(self) -> pd.DataFrame:
+        with db() as (conn, cursor):
+            cursor.execute("TRUNCATE {};".format(DB_CONF.tableName))
+            conn.commit()
+            return True
+        return False
 
 
 class writeDatabase:

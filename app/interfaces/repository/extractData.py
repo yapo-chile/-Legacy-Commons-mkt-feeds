@@ -2,7 +2,7 @@
 import logging
 import pandas as pd  # type: ignore
 import threading
-from infraestructure.pgsql import rawSqlToDict
+from infraestructure.pgsql import rawSqlToDict, Pgsql
 from infraestructure.pgsql import writeDatabase
 from infraestructure.config import Database
 
@@ -346,6 +346,7 @@ def getFeedToEndpoint(category=None):
 
 
 def mainExtract():
+    Pgsql().truncate()
     categoryList = [1220, 1240,
                     2020, 2060,
                     3060, 3040, 3020, 3080,
