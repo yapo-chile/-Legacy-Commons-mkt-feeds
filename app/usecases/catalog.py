@@ -9,6 +9,11 @@ class CatalogUsecases(CatalogRepo):
 
     def generate(self):
         catalog = self.getCatalog()
+        # Leaving this commented so would be used to check
+        # repeated rows in the future
+        # duplicateRowsDF = catalog[catalog.duplicated(keep='last')]
+        # print(duplicateRowsDF.head())
+        catalog.drop_duplicates(inplace=True)
         catalog.to_csv(self.filepath(),
                        sep=";",
                        header=True,
