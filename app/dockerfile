@@ -18,5 +18,6 @@ ENTRYPOINT ["/entrypoint.sh"]
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "--workers", "6", \
     "--threads", "4", "--worker-class", "gthread", \
     "--log-level", "debug", "--enable-stdio-inheritance", \
+    "--preload", \
     "--capture-output", \
     "app:APP"]

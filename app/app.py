@@ -9,7 +9,6 @@ CONFIG: Config = Config()
 
 # Logger initial conf
 LOGGER = logging.getLogger(CONFIG.logger.LogLevel)
-LOGGER.handlers.extend(LOGGER.handlers)
 LOGGER.setLevel(LOGGER.level)
 LOGGER.info(CONFIG)
 
@@ -46,4 +45,5 @@ if __name__ == "__main__":
     APP.run(host=CONFIG.server.Host,
             port=CONFIG.server.Port,
             debug=CONFIG.server.Debug,
-            threaded=True)
+            threaded=True,
+            use_reloader=False)
