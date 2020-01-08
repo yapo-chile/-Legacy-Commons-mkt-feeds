@@ -9,11 +9,10 @@ class CatalogUsecases(CatalogRepo):
 
     def generate(self):
         catalog = self.getCatalog()
-        np.savetxt("app/tmp/catalog_{}.csv".format(self.id),
-                   catalog.values,
-                   delimiter=";",
-                   fmt="%s",
-                   header=";".join(catalog.columns.values))
+        catalog.to_csv("app/tmp/catalog_{}.csv".format(self.id),
+                       sep=";",
+                       header=True,
+                       index=False)
         if len(catalog) > 0:
             self.logger.info(
                 '{} rows downloaded from catalog id {}'.format(
@@ -24,7 +23,7 @@ class CatalogUsecases(CatalogRepo):
                     self.id))
         return True
 
-    def create(self) -> bool:
+    def createCsv(self) -> bool:
         t = threading.Thread(target=self.generate)
         t.start()
         return True

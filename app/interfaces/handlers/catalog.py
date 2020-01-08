@@ -21,7 +21,7 @@ class CatalogHandler(CatalogUsecases):
         self.id = catalogId
 
     def create(self):
-        resp = self.create()
+        resp = self.createCsv()
         if resp:
             r = Response(202)
             return r.toJson(msg=d.JSONType({"status": "Creating"}))
