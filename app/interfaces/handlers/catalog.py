@@ -30,13 +30,12 @@ class CatalogHandler(CatalogUsecases):
 
     # get func finds a file if exists and download it
     def get(self):
-        filename = self.filename()
-        file = Path("app/tmp/{}".format(filename)).absolute()
+        file = Path(self.filepath()).absolute()
         if file.is_file():
             self.logger.info('catalog id {} downloaded'.format(self.id))
             r = Response(200)
             return r.toCsv(file=file,
-                           filename=filename)
+                           filename=self.filename())
         r = Response(404)
         return r.toJson(msg=d.JSONType({"status": "File doesnt exists"}))
 

@@ -23,7 +23,7 @@ class CatalogRepo():
                 condition = d.Condition('==')
             return condition
         query = ""
-        for p in self.config["params"]:
+        for p in self.catalogConfig["params"]:
             p["condition"] = translateCondition(p["condition"])
             query += " {field} {condition} {value} {union}".format(**p)
         return query
@@ -53,7 +53,7 @@ class CatalogRepo():
 
     def _getParams(self) -> str:
         query = ""
-        if self.config["params"] is not []:
+        if self.catalogConfig["params"] is not []:
             query = self._parseParams()
         return query
 
@@ -62,17 +62,18 @@ class CatalogRepo():
         self.catalog = self.catalog.query(self._getParams())
 
     def _applyFields(self) -> None:
-        if len(self.config["fields"]) > 0:
-            self.catalog = self.catalog.rename(columns=self.config["fields"])
+        if len(self.catalogConfig["fields"]) > 0:
+            self.catalog = \
+                self.catalog.rename(columns=self.catalogConfig["fields"])
 
     def _applyCreateColumn(self) -> None:
-        if "create_column" in self.config:
-            for k, v in self.config["create_column"].items():
+        if "create_column" in self.catalogConfig:
+            for k, v in self.catalogConfig["create_column"].items():
                 self.catalog[k] = self.catalog.eval(v)
 
     def getCatalog(self) -> pd.DataFrame:
-        self.config = CatalogConf().get(self.id)  # type: ignore
-        if len(self.config) > 0:
+        self.catalogConfig = CatalogConf().get(self.id)  # type: ignore
+        if len(self.catalogConfig) > 0:
             self._getData()
             self._applyCreateColumn()
             self._applyFields()

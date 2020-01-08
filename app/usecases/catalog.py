@@ -9,7 +9,7 @@ class CatalogUsecases(CatalogRepo):
 
     def generate(self):
         catalog = self.getCatalog()
-        catalog.to_csv("app/tmp/catalog_{}.csv".format(self.id),
+        catalog.to_csv(self.filepath(),
                        sep=";",
                        header=True,
                        index=False)
@@ -28,6 +28,9 @@ class CatalogUsecases(CatalogRepo):
         t.start()
         return True
 
+    def filepath(self):  # type: ignore
+        return "{}/{}".format(self.config.server.tmpLocation,
+                              self.filename())
+
     def filename(self):  # type: ignore
-        filename = "catalog_{}.csv".format(self.id)
-        return filename
+        return "catalog_{}.csv".format(self.id)

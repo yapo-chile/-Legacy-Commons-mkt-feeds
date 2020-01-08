@@ -43,4 +43,7 @@ def dataExtractor() -> d.JSONType:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    APP.run(*CONFIG.server, threaded=True)
+    APP.run(host=CONFIG.server.Host,
+            port=CONFIG.server.Port,
+            debug=CONFIG.server.Debug,
+            threaded=True)
