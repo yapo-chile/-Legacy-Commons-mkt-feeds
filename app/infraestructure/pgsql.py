@@ -50,7 +50,7 @@ def rawSqlToDict(query, param=None):
                             port=dbs.port,
                             database=dbs.dbname)
     cursor = conn.cursor()
-    conn.set_client_encoding('latin_1')
+    conn.set_client_encoding('UTF-8')
     cursor.execute(query, param)
     fieldnames = [name[0] for name in cursor.description]
     result = []
@@ -116,11 +116,11 @@ class writeDatabase:
                 '|'.join(map(cleanCsvValue, (
                     rowDict['ad_id'],
                     rowDict['ad_insertion'],
-                    rowDict['name'],
+                    cleanStrValue(rowDict['name']),
                     rowDict['image_url'],
                     rowDict['main_category'],
                     rowDict['category'],
-                    rowDict['description'],
+                    cleanStrValue(rowDict['description']),
                     rowDict['price'],
                     rowDict['region'],
                     rowDict['url'],
@@ -134,6 +134,7 @@ class writeDatabase:
                     rowDict['num_ad_replies'],
                 ))) + '\n'
                 for rowDict in dataDict
+                if len(cleanStrValue(rowDict['url'])) == len(rowDict['url'])
             ))
 
             self.log.info('Preparing data for insert.')

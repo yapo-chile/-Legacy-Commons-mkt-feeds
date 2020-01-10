@@ -27,6 +27,9 @@ start: compose-up info
 docker-publish:
 	@scripts/commands/docker-publish.sh
 
+## Publishes container in local registry
+docker-publish-local:
+	@scripts/commands/docker-local-registry.sh
 
 ## Execute the service
 remove:

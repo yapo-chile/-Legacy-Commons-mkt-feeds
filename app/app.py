@@ -45,5 +45,4 @@ if __name__ == "__main__":
     APP.run(host=CONFIG.server.Host,
             port=CONFIG.server.Port,
             debug=CONFIG.server.Debug,
-            threaded=True,
-            use_reloader=False)
+            threaded=True)

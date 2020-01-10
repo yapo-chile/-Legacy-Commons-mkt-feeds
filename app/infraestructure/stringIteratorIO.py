@@ -45,4 +45,4 @@ def cleanCsvValue(value: Optional[Any]) -> str:
 
 
 def cleanStrValue(value: str) -> str:
-    return value.replace('\\', '')
+    return value.replace('\\', '').encode('utf-8').decode('utf-8', 'ignore')
