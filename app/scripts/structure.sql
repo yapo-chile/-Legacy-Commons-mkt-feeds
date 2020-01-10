@@ -1,5 +1,5 @@
 CREATE TABLE public.data_feed (
-	ad_id text NULL,
+	ad_id text NULL PRIMARY KEY,
 	ad_insertion text NULL,
 	"name" text NULL,
 	image_url text NULL,
