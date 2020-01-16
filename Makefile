@@ -1,4 +1,5 @@
 include scripts/commands/vars.mk
+-include scripts/commands/secrets.mk
 
 ## Deletes all containers
 docker-remove: docker-stop

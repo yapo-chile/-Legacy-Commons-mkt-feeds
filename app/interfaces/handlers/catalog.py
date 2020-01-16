@@ -35,7 +35,7 @@ class CatalogHandler(CatalogUsecases):
             self.logger.info('catalog id {} downloaded'.format(self.id))
             r = Response(200)
             return r.toCsv(file=file,
-                           filename=self.filename())
+                           filename=self.filename(include_time=True))
         r = Response(404)
         return r.toJson(msg=d.JSONType({"status": "File doesnt exists"}))
 

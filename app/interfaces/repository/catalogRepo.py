@@ -1,10 +1,10 @@
 import domain as d
 import pandas as pd  # type: ignore
 from infraestructure.pgsql import Pgsql  # type: ignore
-from infraestructure.catalog import CatalogConf
+from infraestructure.catalog import CatalogConf  # type: ignore
 
 
-class CatalogRepo():
+class CatalogRepo(CatalogConf):
     def __init__(self) -> None:
         self.catalog: pd.DataFrame = pd.DataFrame([])
 
@@ -72,7 +72,7 @@ class CatalogRepo():
                 self.catalog[k] = self.catalog.eval(v)
 
     def getCatalog(self) -> pd.DataFrame:
-        self.catalogConfig = CatalogConf().get(self.id)  # type: ignore
+        self.catalogConfig = self.getCatalogConf(self.id)  # type: ignore
         if len(self.catalogConfig) > 0:
             self._getData()
             self._applyCreateColumn()
