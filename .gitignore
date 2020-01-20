@@ -10,4 +10,7 @@ pgdata
 man
 app/tmp/*.csv
 reports/checkstyle-report.xml
+secrets.mk
+.DS_Store
+*.txt
 __pycache__/

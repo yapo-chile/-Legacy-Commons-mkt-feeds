@@ -1,5 +1,6 @@
 import numpy as np  # type: ignore
 import threading
+import datetime
 from interfaces.repository.catalogRepo import CatalogRepo
 
 
@@ -20,7 +21,7 @@ class CatalogUsecases(CatalogRepo):
                        index=False)
         if len(catalog) > 0:
             self.logger.info(
-                '{} rows downloaded from catalog id {}'.format(
+                '{} rows created for catalog id {} file'.format(
                     len(catalog), self.id))
         else:
             self.logger.info(
@@ -37,5 +38,8 @@ class CatalogUsecases(CatalogRepo):
         return "{}/{}".format(self.config.server.tmpLocation,
                               self.filename())
 
-    def filename(self):  # type: ignore
-        return "catalog_{}.csv".format(self.id)
+    def filename(self, include_time=False):  # type: ignore
+        return "catalog_{}{}.csv".format(self.id,
+                                         datetime.datetime.now()
+                                         .strftime("%m%d%Y%H%M%S")
+                                         if include_time else "")

@@ -28,7 +28,8 @@ class Response():
         response = send_file(file,
                              mimetype='text/csv',
                              attachment_filename=filename,
-                             as_attachment=True)
+                             as_attachment=True,
+                             cache_timeout=-1)
         return response
 
     # status getter
