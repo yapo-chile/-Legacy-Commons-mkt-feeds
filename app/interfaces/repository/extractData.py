@@ -1,4 +1,5 @@
 # coding=utf-8
+import datetime
 import logging
 import pandas as pd  # type: ignore
 import threading
@@ -161,6 +162,8 @@ class extractFeed(object):
         self.log.info('Extract feed from category %s' % str(category))
         self.log.info('Filter add category %s' % filter_additional_category)
         self.log.info('Filter ad ids %s' % filter_ad_ids)
+        current_year = str(datetime.datetime.now().year)
+        last_year = str(datetime.datetime.now().year - 1)
         query = """
         select *
         from (select
@@ -313,9 +316,9 @@ class extractFeed(object):
             left join
                 ad_params ap on a.ad_id = ap.ad_id and ap."name" = 'condition'
             left join
-                (select * from blocket_2019.mail_queue
+                (select * from blocket_""" + current_year + """".mail_queue
                 union all
-                select * from blocket_2018.mail_queue) mq on
+                select * from blocket_""" + last_year + """".mail_queue) mq on
                 a.list_id = mq.list_id
             where
                 am.ad_media_id is not null
