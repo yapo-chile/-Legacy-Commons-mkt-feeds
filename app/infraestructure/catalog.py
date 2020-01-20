@@ -1,25 +1,31 @@
+#  type: ignore
 import domain as d
+import json
+import boto3
+import botocore
 
 
 # CatalogConf checks what set of confs are needed to generate the requested csv
 class CatalogConf():
 
-    def get(self, catalogId: d.CatalogId) -> d.JSONType:
-        if catalogId == 1:
-            config = {
-                "params": [
-                    {"field": "year", "condition": "higher",
-                     "value": "2000", "union": "and"},
-                    {"field": "year", "condition": "lower_than",
-                     "value": "2020", "union": "or"},
-                    {"field": "category", "condition": "equal",
-                     "value": "2020", "union": ""}],
-                "fields": {"category": "categoria"},
-                "create_column": {
-                    "test": "year + category",
-                    "future_year": "2 * year"
-                }
-            }
-        else:
-            config = {}
-        return d.JSONType(config)
+    def getCatalogConf(self, catalogId: d.CatalogId) -> d.JSONType:
+        session = boto3.Session(
+            aws_access_key_id=self.config.aws.accessKey,
+            aws_secret_access_key=self.config.aws.secretKey,
+            region_name=self.config.aws.region,
+        )
+        s3 = session.resource('s3')
+        key = '{}/{}'.format(self.config.aws.bucketFolder,
+                             self.config.server.configFile)
+        try:
+            s3Object = s3.Object(self.config.aws.bucketName, key)
+            s3Conf = s3Object.get()['Body'].read().decode('utf-8')
+            data = json.loads(s3Conf)
+            if str(catalogId) in data:
+                return d.JSONType(data[str(catalogId)])
+            else:
+                self.logger.error("Catalog id not found in config file.")
+                return d.JSONType([{}])
+        except botocore.exceptions.ClientError as e:
+            self.logger.error("The object does not exist.")
+            return d.JSONType([{}])

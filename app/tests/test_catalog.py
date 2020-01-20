@@ -2,7 +2,7 @@ import unittest
 from app import APP
 
 TEST_APP = APP.test_client()
-URL = '/catalog'
+URL = '/catalog/get'
 
 
 class TestCatalog(unittest.TestCase):

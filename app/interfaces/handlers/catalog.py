@@ -1,6 +1,7 @@
-import io
+from pathlib import Path
 import domain as d
 import logging
+import numpy as np  # type: ignore
 from usecases.catalog import CatalogUsecases
 from .handler import Response
 
@@ -19,21 +20,24 @@ class CatalogHandler(CatalogUsecases):
         self.logger = logger
         self.id = catalogId
 
-    def Run(self):
-        data = self.get()
-        stream = io.StringIO()
-        data.to_csv(stream, sep=";")
-        if len(data) > 0:
-            self.logger.info(
-                '{} rows downloaded from catalog id {}'.format(
-                    len(data), self.id))
-        else:
-            self.logger.info(
-                'No rows found for catalog id {}, returning empty file'.format(
-                    self.id))
+    def create(self):
+        resp = self.createCsv()
+        if resp:
+            r = Response(202)
+            return r.toJson(msg=d.JSONType({"status": "Creating"}))
+        r = Response(400)
+        return r.toJson(msg=d.JSONType({"status": "Failed to create csv"}))
 
-        r = Response(200)
-        return r.toCsv(stream=stream)
+    # get func finds a file if exists and download it
+    def get(self):
+        file = Path(self.filepath()).absolute()
+        if file.is_file():
+            self.logger.info('catalog id {} downloaded'.format(self.id))
+            r = Response(200)
+            return r.toCsv(file=file,
+                           filename=self.filename(include_time=True))
+        r = Response(404)
+        return r.toJson(msg=d.JSONType({"status": "File doesnt exists"}))
 
     @property
     def id(self) -> d.CatalogId:

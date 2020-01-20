@@ -1,19 +1,32 @@
 from typing import Iterator, Dict, Any
 import logging
-import pandas as pd
-import psycopg2
-from infraestructure.stringIteratorIO import StringIteratorIO
-from infraestructure.stringIteratorIO import cleanCsvValue
-from infraestructure.stringIteratorIO import cleanStrValue
-from infraestructure.config import Database, DatabaseSource
+import pandas as pd  # type: ignore
+import psycopg2  # type: ignore
+from psycopg2 import pool
+from contextlib import contextmanager
+from infraestructure.stringIteratorIO import StringIteratorIO,\
+    cleanCsvValue, cleanStrValue
+from infraestructure import config
+
+DB_CONF = config.Database()
+DB_POOL = psycopg2.pool.SimpleConnectionPool(1, 10,
+                                             user=DB_CONF.user,
+                                             password=DB_CONF.password,
+                                             host=DB_CONF.host,
+                                             port=DB_CONF.port,
+                                             database=DB_CONF.dbname)
 
 
-class Pgsql():
-    def execute(self, params: str) -> pd.DataFrame:
-        data = pd.DataFrame({'year': [2017, 2014, 2018, 2019],
-                             'category': [2, 5, 3, 2],
-                             'region': [10, 2, 1, 8]})
-        return data.query(params)
+@contextmanager
+def db():
+    conn = DB_POOL.getconn()
+    conn.set_client_encoding('UTF-8')
+    cur = conn.cursor()
+    try:
+        yield conn, cur
+    finally:
+        cur.close()
+        DB_POOL.putconn(conn)
 
 
 def rawSqlToDict(query, param=None):
@@ -30,7 +43,7 @@ def rawSqlToDict(query, param=None):
     Dict
         format [{u'nombre:'valor',N..}]
     """
-    dbs = DatabaseSource()
+    dbs = config.DatabaseSource()
     conn = psycopg2.connect(user=dbs.user,
                             password=dbs.password,
                             host=dbs.host,
@@ -53,6 +66,23 @@ def rawSqlToDict(query, param=None):
     return result
 
 
+class Pgsql():
+
+    def select(self, query: str) -> pd.DataFrame:
+        with db() as (conn, cursor):
+            cursor.execute(query)
+            data = pd.DataFrame(cursor.fetchall())
+            data.columns = [name[0] for name in cursor.description]
+            return data
+
+    def truncate(self) -> pd.DataFrame:
+        with db() as (conn, cursor):
+            cursor.execute("TRUNCATE {};".format(DB_CONF.tableName))
+            conn.commit()
+            return True
+        return False
+
+
 class writeDatabase:
     def __init__(self):
         self.log = logging.getLogger('database')
@@ -64,7 +94,7 @@ class writeDatabase:
         self.getConnection()
 
     def getConnection(self):
-        dbw = Database()
+        dbw = config.Database()
         self.log.info('getConnection DB %s/%s', dbw.host, dbw.dbname)
         self.connection = psycopg2.connect(user=dbw.user,
                                            password=dbw.password,
@@ -74,7 +104,6 @@ class writeDatabase:
 
     def executeCommand(self, command):
         self.log.info('executeCommand : %s', command)
-        Database()
         cursor = self.connection.cursor()
         cursor.execute(command)
         self.connection.commit()
@@ -105,6 +134,7 @@ class writeDatabase:
                     rowDict['num_ad_replies'],
                 ))) + '\n'
                 for rowDict in dataDict
+                if len(cleanStrValue(rowDict['url'])) == len(rowDict['url'])
             ))
 
             self.log.info('Preparing data for insert.')

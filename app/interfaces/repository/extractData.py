@@ -1,13 +1,15 @@
 # coding=utf-8
 import logging
-import pandas as pd
-from infraestructure.pgsql import rawSqlToDict
+import pandas as pd  # type: ignore
+import threading
+from infraestructure.pgsql import rawSqlToDict, Pgsql
 from infraestructure.pgsql import writeDatabase
 from infraestructure.config import Database
 
 
 class extractFeed(object):
-
+    # extractFeed reads a ads source providers db and insert them
+    # in app db
     def __init__(self):
         self.log = logging.getLogger('extractData')
 
@@ -344,6 +346,7 @@ def getFeedToEndpoint(category=None):
 
 
 def mainExtract():
+    Pgsql().truncate()
     categoryList = [1220, 1240,
                     2020, 2060,
                     3060, 3040, 3020, 3080,
@@ -352,3 +355,8 @@ def mainExtract():
                     6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180]
     for category in categoryList:
         getFeedToEndpoint(category)
+
+
+def generate():
+    t = threading.Thread(target=mainExtract)
+    t.start()

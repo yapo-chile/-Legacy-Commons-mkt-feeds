@@ -1,29 +1,36 @@
 include scripts/commands/vars.mk
+-include scripts/commands/secrets.mk
 
 ## Deletes all containers
-docker-remove:
+docker-remove: docker-stop
 	docker-compose rm -f
 
 ## Stops all containers
 docker-stop:
 	docker-compose stop
 
+## Push gateway and db images to local registry
+docker-push-local:
+	@scripts/commands/docker-local-registry.sh
+
 ## Compiles all the services
-docker-build: build
-	docker-compose build
-	#--no-cache
+docker-build: build build-proxy
+	docker-compose build --no-cache
 
 ## Compile and start the service using docker
 compose-up: docker-build
 	docker-compose up -d
 
 start: compose-up info
-	##--scale -d suggester=4 
+	##--scale -d core=4 
 
 ## Publishes container
 docker-publish:
 	@scripts/commands/docker-publish.sh
 
+## Publishes container in local registry
+docker-publish-local:
+	@scripts/commands/docker-local-registry.sh
 
 ## Execute the service
 remove:
@@ -33,6 +40,10 @@ remove:
 ## Compile and start the service
 build:
 	@scripts/commands/docker-build.sh
+
+## Compile and start proxy service
+build-proxy:
+	@scripts/commands/docker-build-proxy.sh
 
 ## Compile and start the service using docker
 reboot: remove build
@@ -76,7 +87,11 @@ lints:
 	@scripts/commands/lints.sh
 
 # runs all related test to check app
-tests: test check-style lints
+tests: check-style lints
+
+# Starts gunicorn locally simulating a dockerized enviroment
+gunicorn:
+	cd app && gunicorn -b ${SERVER_HOST}:${SERVER_PORT} --workers=6 --threads=4 --worker-class=gthread --log-level=debug --enable-stdio-inheritance --preload --capture-output app:APP
 
 # shows app info
 info:
