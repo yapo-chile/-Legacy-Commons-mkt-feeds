@@ -316,9 +316,9 @@ class extractFeed(object):
             left join
                 ad_params ap on a.ad_id = ap.ad_id and ap."name" = 'condition'
             left join
-                (select * from blocket_""" + current_year + """".mail_queue
+                (select * from blocket_%s.mail_queue
                 union all
-                select * from blocket_""" + last_year + """".mail_queue) mq on
+                select * from blocket_%s.mail_queue) mq on
                 a.list_id = mq.list_id
             where
                 am.ad_media_id is not null
@@ -331,6 +331,8 @@ class extractFeed(object):
                 filter_uniq_category,
                 filter_additional_category,
                 filter_ad_ids,
+                current_year,
+                last_year,
                 filter_price,
                 group_by)
         self.log.info('Executing query.')
