@@ -22,10 +22,13 @@ class CatalogRepo(CatalogConf):
             elif condition == 'equal':
                 condition = d.Condition('==')
             return condition
-        query = ""
+        query = ''
         for p in self.catalogConfig["params"]:
             p["condition"] = translateCondition(p["condition"])
-            query += " {field} {condition} {value} {union}".format(**p)
+            if isinstance(p["value"], str):
+                query += ' {field} {condition} "{value}" {union}'.format(**p)
+            else:
+                query += ' {field} {condition} {value} {union}'.format(**p)
         return query
 
     def _getQueryCatalog(self) -> str:
