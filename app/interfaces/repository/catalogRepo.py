@@ -42,7 +42,7 @@ class CatalogRepo(CatalogConf):
             REPLACE(description,';','') as description,
             price::bigint,
             region,
-            url,
+            REPLACE(url,'"','') as url,
             condition,
             ios_url,
             ios_app_store_id::int,
@@ -81,3 +81,9 @@ class CatalogRepo(CatalogConf):
             self._applyCreateColumn()
             self._applyFields()
         return self.catalog
+
+    def getOutputFields(self) -> []:
+        return [x for x in self.catalogConfig["fields"].values()]
+
+    def getOutputDelimiter(self) -> str:
+        return self.catalogConfig if "delimiter" in self.catalogConfig else ","
