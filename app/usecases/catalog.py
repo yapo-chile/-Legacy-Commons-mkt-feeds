@@ -10,15 +10,19 @@ class CatalogUsecases(CatalogRepo):
 
     def generate(self):
         catalog = self.getCatalog()
+        columns = self.getOutputFields()
+        delimiter = self.getOutputDelimiter()
+
         # Leaving this commented so would be used to check
         # repeated rows in the future
         # duplicateRowsDF = catalog[catalog.duplicated(keep='last')]
         # print(duplicateRowsDF.head())
         catalog.drop_duplicates(inplace=True)
         catalog.to_csv(self.filepath(),
-                       sep=";",
+                       sep=delimiter,
                        header=True,
-                       index=False)
+                       index=False,
+                       columns=columns)
         if len(catalog) > 0:
             self.logger.info(
                 '{} rows created for catalog id {} file'.format(

@@ -1,5 +1,6 @@
 import domain as d
 import pandas as pd  # type: ignore
+from typing import List
 from infraestructure.pgsql import Pgsql  # type: ignore
 from infraestructure.catalog import CatalogConf  # type: ignore
 
@@ -22,10 +23,13 @@ class CatalogRepo(CatalogConf):
             elif condition == 'equal':
                 condition = d.Condition('==')
             return condition
-        query = ""
+        query = ''
         for p in self.catalogConfig["params"]:
             p["condition"] = translateCondition(p["condition"])
-            query += " {field} {condition} {value} {union}".format(**p)
+            if isinstance(p["value"], str):
+                query += ' {field} {condition} "{value}" {union}'.format(**p)
+            else:
+                query += ' {field} {condition} {value} {union}'.format(**p)
         return query
 
     def _getQueryCatalog(self) -> str:
@@ -39,7 +43,7 @@ class CatalogRepo(CatalogConf):
             REPLACE(description,';','') as description,
             price::bigint,
             region,
-            url,
+            REPLACE(url,'"','') as url,
             condition,
             ios_url,
             ios_app_store_id::int,
@@ -78,3 +82,9 @@ class CatalogRepo(CatalogConf):
             self._applyCreateColumn()
             self._applyFields()
         return self.catalog
+
+    def getOutputFields(self) -> List[str]:
+        return [x for x in self.catalogConfig["fields"].values()]
+
+    def getOutputDelimiter(self) -> str:
+        return self.catalogConfig if "delimiter" in self.catalogConfig else ","
