@@ -1,5 +1,6 @@
 import domain as d
 import pandas as pd  # type: ignore
+from typing import List
 from infraestructure.pgsql import Pgsql  # type: ignore
 from infraestructure.catalog import CatalogConf  # type: ignore
 
@@ -82,7 +83,7 @@ class CatalogRepo(CatalogConf):
             self._applyFields()
         return self.catalog
 
-    def getOutputFields(self) -> []:
+    def getOutputFields(self) -> List[str]:
         return [x for x in self.catalogConfig["fields"].values()]
 
     def getOutputDelimiter(self) -> str:
