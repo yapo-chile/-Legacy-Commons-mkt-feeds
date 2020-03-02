@@ -6,7 +6,7 @@ from typing import NamedTuple
 def getValueFromFile(env, default=""):
     try:
         file = environ.get(env)
-        if file != None:
+        if file is not None:
             f = open(file)
             return f.readline()
         return default
