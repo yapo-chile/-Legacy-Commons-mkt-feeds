@@ -10,6 +10,11 @@ class CatalogUsecases(CatalogRepo):
 
     def generate(self):
         catalog = self.getCatalog()
+        if catalog.empty:
+            self.logger.info(
+                'No rows found for catalog id {}, returning empty file'.format(
+                    self.id))
+            return False
         columns = self.getOutputFields()
         delimiter = self.getOutputDelimiter()
 
@@ -27,10 +32,7 @@ class CatalogUsecases(CatalogRepo):
             self.logger.info(
                 '{} rows created for catalog id {} file'.format(
                     len(catalog), self.id))
-        else:
-            self.logger.info(
-                'No rows found for catalog id {}, returning empty file'.format(
-                    self.id))
+        del catalog
         return True
 
     def createCsv(self) -> bool:
