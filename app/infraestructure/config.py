@@ -6,8 +6,10 @@ from typing import NamedTuple
 
 def getValue(env, default=""):
     if env.endswith("FILE"):
-        return getValueFromFile(env, default)
-    return environ.get(env, default)
+        val = getValueFromFile(env, default)
+        return val if val.strip() else environ.get(env[:-5], default)
+    else:
+        return environ.get(env, default)
 
 
 def getValueFromFile(env, default):
@@ -19,7 +21,9 @@ def getValueFromFile(env, default):
         logging.error('Error on env file: %s - %s', env, file)
         return default
     except IOError:
-        logging.error('Error getting file: %s', IOError)
+        logging.error(
+            'Error getting file: %s - %s - %s',
+            env, environ.get(env), IOError)
         return default
 
 
