@@ -3,11 +3,13 @@ from os import environ
 from typing import NamedTuple
 
 
-def getValueFromFile(env, default=None):
-    file = environ.get(env)
+def getValueFromFile(env, default=""):
     try:
-        f = open(file)
-        return f.readline()
+        file = environ.get(env)
+        if file != None:
+            f = open(file)
+            return f.readline()
+        return default
     except IOError:
         return default
 
