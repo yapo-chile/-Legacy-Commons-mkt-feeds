@@ -2,10 +2,12 @@
 export UNAMESTR=$(uname)
 
 # GIT variables
-export GIT_BRANCH=$(shell git name-rev --name-only HEAD | sed "s/~.*//" | sed 's/\//_/;')
+export BRANCH=$(shell git branch | sed -n 's/^\* //p')
+export GIT_BRANCH=$(shell if [ -n "${BUILD_BRANCH}" ]; then echo "${BUILD_BRANCH}"; else echo "${BRANCH}"; fi;)
 export GIT_COMMIT=$(shell git rev-parse HEAD)
 export GIT_COMMIT_SHORT=$(shell git rev-parse --short HEAD)
 export GIT_TAG=$(shell git tag -l --points-at HEAD | tr '\n' '_' | sed 's/_$$//;')
+export GIT_COMMIT_DATE=$(shell TZ="America/Santiago" git show --quiet --date='format-local:%d-%m-%Y_%H:%M:%S' --format="%cd")
 export BUILD_CREATOR=$(shell git log --format=format:%ae | head -n 1)
 export GIT_BRANCH_LOWERCASE=$(shell echo "${GIT_BRANCH}" | sed 's/\//_/;')
 
