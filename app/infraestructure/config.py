@@ -1,5 +1,4 @@
 import json
-import logging
 from os import environ
 from typing import NamedTuple
 
@@ -8,22 +7,17 @@ def getValue(env, default=""):
     if env.endswith("FILE"):
         val = getValueFromFile(env, default)
         return val if val.strip() else environ.get(env[:-5], default)
-    else:
-        return environ.get(env, default)
+    return environ.get(env, default)
 
 
 def getValueFromFile(env, default):
     try:
         file = environ.get(env)
         if file is not None:
-            f = open(file)
-            return f.readline()
-        logging.error('Error on env file: %s - %s', env, file)
+            fileData = open(file)
+            return fileData.readline()
         return default
     except IOError:
-        logging.error(
-            'Error getting file: %s - %s - %s',
-            env, environ.get(env), IOError)
         return default
 
 

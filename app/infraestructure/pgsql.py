@@ -9,7 +9,7 @@ from infraestructure.stringIteratorIO import StringIteratorIO,\
 from infraestructure import config
 
 DB_CONF = config.Database()
-DB_POOL = psycopg2.pool.SimpleConnectionPool(1, 10,
+DB_POOL = psycopg2.pool.ThreadedConnectionPool(1, 10,
                                              user=DB_CONF.user,
                                              password=DB_CONF.password,
                                              host=DB_CONF.host,
