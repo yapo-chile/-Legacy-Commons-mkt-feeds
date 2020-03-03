@@ -66,4 +66,5 @@ class Config(NamedTuple):
     logger: Logger = Logger()
     server: Server = Server()
     database: Database = Database()
+    databaseSource: DatabaseSource = DatabaseSource()
     aws: AWS = AWS()

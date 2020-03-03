@@ -76,3 +76,5 @@ export DOCS_COMMIT_MESSAGE=Generate updated documentation
 # NGINX variables
 export NGINX_PORT=8080
 export NGINX_EXPOSED_PORT=$(call genport,5)
+
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
