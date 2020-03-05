@@ -24,8 +24,6 @@ class CatalogConf():
             if str(catalogId) in data:
                 return d.JSONType(data[str(catalogId)])
             else:
-                self.logger.error("Catalog id not found in config file.")
-                return d.JSONType([{}])
+                return d.JSONType([])
         except botocore.exceptions.ClientError as e:
-            self.logger.error("The object does not exist.")
-            return d.JSONType([{}])
+            return d.JSONType([])

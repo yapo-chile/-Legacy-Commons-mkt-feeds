@@ -38,8 +38,8 @@ class CatalogRepo(CatalogConf):
             ad_insertion,
             REPLACE(name,';','') as name,
             image_url,
-            REPLACE(main_category,'"','') as main_category,
-            REPLACE(category,'"','') as category,
+            main_category,
+            category,
             REPLACE(description,';','') as description,
             price::bigint,
             region,
@@ -57,7 +57,8 @@ class CatalogRepo(CatalogConf):
 
     def _getParams(self) -> str:
         query = ""
-        if self.catalogConfig["params"] is not []:
+        if "params" in self.catalogConfig and\
+            len(self.catalogConfig["params"]) > 0:
             query = self._parseParams()
         return query
 
@@ -81,7 +82,8 @@ class CatalogRepo(CatalogConf):
             self._getData()
             self._applyCreateColumn()
             self._applyFields()
-        return self.catalog
+            return self.catalog
+        return pd.DataFrame
 
     def getOutputFields(self) -> List[str]:
         return [x for x in self.catalogConfig["fields"].values()]

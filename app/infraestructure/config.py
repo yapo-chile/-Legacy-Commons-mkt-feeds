@@ -37,7 +37,7 @@ class Server(NamedTuple):
 
 # Database tuple that contains all definitions for its conection
 class Database(NamedTuple):
-    host: str = getValue("DATABASE_HOST", "10.15.1.78")
+    host: str = getValue("DATABASE_HOST", "0.0.0.0")
     port: int = int(getValue("DATABASE_PORT", "5432"))
     dbname: str = getValue("DATABASE_NAME", "feeds-db")
     user: str = getValue("DATABASE_USER", "docker")
