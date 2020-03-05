@@ -57,8 +57,8 @@ class CatalogRepo(CatalogConf):
 
     def _getParams(self) -> str:
         query = ""
-        if "params" in self.catalogConfig and\
-            len(self.catalogConfig["params"]) > 0:
+        if "params" in self.catalogConfig and \
+                len(self.catalogConfig["params"]) > 0:
             query = self._parseParams()
         return query
 
