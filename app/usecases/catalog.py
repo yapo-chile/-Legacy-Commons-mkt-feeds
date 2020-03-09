@@ -1,6 +1,7 @@
 import numpy as np  # type: ignore
 import threading
 import datetime
+import gc
 from interfaces.repository.catalogRepo import CatalogRepo
 
 
@@ -33,6 +34,7 @@ class CatalogUsecases(CatalogRepo):
                 '{} rows created for catalog id {} file'.format(
                     len(catalog), self.id))
         del catalog
+        gc.collect()
         return True
 
     def createCsv(self) -> bool:
