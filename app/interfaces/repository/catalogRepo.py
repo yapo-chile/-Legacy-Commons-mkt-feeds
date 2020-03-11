@@ -9,7 +9,8 @@ class CatalogRepo(CatalogConf):
     def __init__(self) -> None:
         self.catalog: pd.DataFrame = pd.DataFrame([])
 
-    def _parseParams(self) -> str:
+    # _parseParams get conditions and generate a query filter
+    def _parseParams(self, params) -> str:
         # Translate Condition
         def translateCondition(condition):
             if condition == 'higher':
@@ -22,9 +23,11 @@ class CatalogRepo(CatalogConf):
                 condition = d.Condition('<')
             elif condition == 'equal':
                 condition = d.Condition('==')
+            elif condition == 'not_equal':
+                condition = d.Condition('!=')
             return condition
         query = ''
-        for p in self.catalogConfig["params"]:
+        for p in params:
             p["condition"] = translateCondition(p["condition"])
             if isinstance(p["value"], str):
                 query += ' {field} {condition} "{value}" {union}'.format(**p)
@@ -32,6 +35,7 @@ class CatalogRepo(CatalogConf):
                 query += ' {field} {condition} {value} {union}'.format(**p)
         return query
 
+    # _getQueryCatalog returns sql query to select all data
     def _getQueryCatalog(self) -> str:
         query = """
             select ad_id::int,
@@ -55,38 +59,55 @@ class CatalogRepo(CatalogConf):
             from data_feed;"""
         return query
 
-    def _getParams(self) -> str:
+    # _getParams get params on catalogConfig and return a query filter
+    def _getParams(self, catalogConfig) -> str:
         query = ""
-        if "params" in self.catalogConfig and \
-                len(self.catalogConfig["params"]) > 0:
-            query = self._parseParams()
+        if "params" in catalogConfig and \
+                len(catalogConfig["params"]) > 0:
+            query = self._parseParams(catalogConfig["params"])
         return query
 
-    def _getData(self) -> None:
-        self.catalog = Pgsql().select(query=self._getQueryCatalog())
-        self.catalog = self.catalog.query(self._getParams())
+    # _getData returns a dataframe using a given sql query
+    def _getData(self) -> pd.DataFrame:
+        return Pgsql().select(query=self._getQueryCatalog())
 
-    def _applyFields(self) -> None:
-        if len(self.catalogConfig["fields"]) > 0:
-            self.catalog = \
-                self.catalog.rename(columns=self.catalogConfig["fields"])
+    # _applyFields returns a dataframe with renamed columns
+    def _applyFields(self, data, catalogConfig) -> pd.DataFrame:
+        if len(catalogConfig["fields"]) > 0:
+            data = data.rename(columns=catalogConfig["fields"])
+        return data
 
-    def _applyCreateColumn(self) -> None:
-        if "create_column" in self.catalogConfig:
-            for k, v in self.catalogConfig["create_column"].items():
-                self.catalog[k] = self.catalog.eval(v)
+    # _applyCreateColumn returns a dataframe with new columns
+    def _applyCreateColumn(self, data, catalogConfig) -> pd.DataFrame:
+        if "create_column" in catalogConfig:
+            for k, v in catalogConfig["create_column"].items():
+                data[k] = data.eval(v)
+        return data
 
-    def getCatalog(self) -> pd.DataFrame:
-        self.catalogConfig = self.getCatalogConf(self.id)  # type: ignore
-        if len(self.catalogConfig) > 0:
-            self._getData()
-            self._applyCreateColumn()
-            self._applyFields()
-            return self.catalog
+    # getCatalog returns a dataframe filtered by catalogConfig parameters
+    def getCatalog(self, data, catalogConfig) -> pd.DataFrame:
+        if len(catalogConfig) > 0 and not data.empty:
+            dataframe = data.query(self._getParams(catalogConfig))
+            dataframe = self._applyCreateColumn(dataframe, catalogConfig)
+            return self._applyFields(dataframe, catalogConfig)
         return pd.DataFrame
 
-    def getOutputFields(self) -> List[str]:
-        return [x for x in self.catalogConfig["fields"].values()]
+    # getRawCatalog returns a dataframe with all the data
+    def getRawCatalog(self) -> pd.DataFrame:
+        return self._getData()
 
-    def getOutputDelimiter(self) -> str:
-        return self.catalogConfig if "delimiter" in self.catalogConfig else ","
+    # getCatalogConfig returns a specific catalogConfig
+    def getCatalogConfig(self, catalogId) -> d.CatalogConfig:
+        return self.getCatalogConf(catalogId)
+
+    # getAllCatalogConfig returns all catalogConfig present on config file
+    def getAllCatalogConfig(self) -> d.CatalogConfig:
+        return self.getAllCatalogConf()
+
+    # getOutputFields returns a List with all configured output columns
+    def getOutputFields(self, catalogConfig) -> List[str]:
+        return [x for x in catalogConfig["fields"].values()]
+
+    # getOutputDelimiter returns delimiter to be used on output file
+    def getOutputDelimiter(self, catalogConfig) -> str:
+        return catalogConfig if "delimiter" in catalogConfig else ","

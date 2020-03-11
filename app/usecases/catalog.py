@@ -8,23 +8,34 @@ from interfaces.repository.catalogRepo import CatalogRepo
 # CatalogUsecases receives a catalog id and if valid returns a size-fixed
 # data matrix.
 class CatalogUsecases(CatalogRepo):
+    # generate gets catalog data and generates a new file using catalogId
+    def generate(self, catalogId) -> bool:
+        catalogRaw = self.getRawCatalog()
+        catalogConfig = self.getCatalogConfig(catalogId)
+        return self.generateFromCatalog(catalogRaw, catalogConfig, catalogId)
 
-    def generate(self):
-        catalog = self.getCatalog()
+    # generateFromCatalog generates a catalog filtered by catalogConfig
+    # and creates a new csv file using a specifi catalogId.
+    # Returns false if process fails, otherwise returns true
+    def generateFromCatalog(self, catalogRaw, catalogConfig, catalogId):
+        catalog = self.getCatalog(catalogRaw, catalogConfig)
         if catalog.empty:
             self.logger.info(
                 'No rows found for catalog id {}, returning empty file'.format(
-                    self.id))
+                    catalogId))
+            del catalog
+            del catalogRaw
+            del catalogConfig
             return False
-        columns = self.getOutputFields()
-        delimiter = self.getOutputDelimiter()
+        columns = self.getOutputFields(catalogConfig)
+        delimiter = self.getOutputDelimiter(catalogConfig)
 
         # Leaving this commented so would be used to check
         # repeated rows in the future
         # duplicateRowsDF = catalog[catalog.duplicated(keep='last')]
         # print(duplicateRowsDF.head())
         catalog.drop_duplicates(inplace=True)
-        catalog.to_csv(self.filepath(),
+        catalog.to_csv(self.filepath(catalogId),
                        sep=delimiter,
                        header=True,
                        index=False,
@@ -32,22 +43,43 @@ class CatalogUsecases(CatalogRepo):
         if len(catalog) > 0:
             self.logger.info(
                 '{} rows created for catalog id {} file'.format(
-                    len(catalog), self.id))
+                    len(catalog), catalogId))
         del catalog
-        gc.collect()
+        del catalogRaw
+        del catalogConfig
         return True
 
-    def createCsv(self) -> bool:
-        t = threading.Thread(target=self.generate)
+    # generateAll gets all catalogConfig configured on config file
+    # and iterate over them to re-create all files.
+    # Returns true when process is done
+    def generateAll(self):
+        catalogAllConfig = self.getAllCatalogConfig()
+        catalogRaw = self.getRawCatalog()
+        for key, catalogConfig in catalogAllConfig.items():
+            self.generateFromCatalog(catalogRaw, catalogConfig, key)
+        del catalogRaw
+        return True
+
+    # createCsv trigger process to create a file using catalogId
+    def createCsv(self, catalogId) -> bool:
+        t = threading.Thread(target=self.generate, args=(catalogId))
         t.start()
         return True
 
-    def filepath(self):  # type: ignore
-        return "{}/{}".format(self.config.server.tmpLocation,
-                              self.filename())
+    # createAllCsv trigger process to create all files
+    def createAllCsv(self) -> bool:
+        t = threading.Thread(target=self.generateAll)
+        t.start()
+        return True
 
-    def filename(self, include_time=False):  # type: ignore
-        return "catalog_{}{}.csv".format(self.id,
+    # filepath returns a file path using a catalogId
+    def filepath(self, catalogId):  # type: ignore
+        return "{}/{}".format(self.config.server.tmpLocation,
+                              self.filename(catalogId))
+
+    # filename returns a file name using a catalogId
+    def filename(self, catalogId, include_time=False):  # type: ignore
+        return "catalog_{}{}.csv".format(catalogId,
                                          datetime.datetime.now()
                                          .strftime("%m%d%Y%H%M%S")
                                          if include_time else "")
