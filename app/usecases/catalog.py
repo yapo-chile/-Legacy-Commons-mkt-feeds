@@ -1,5 +1,5 @@
 import numpy as np  # type: ignore
-import pandas as pd # type: ignore
+import pandas as pd  # type: ignore
 import threading
 import datetime
 from pathlib import Path
@@ -75,7 +75,7 @@ class CatalogUsecases(CatalogRepo):
 
     # getCsvName if fileList has values concat all csv files, store it
     # and returns this new filename. Otherwise returns catalogId
-    def getCsvName(self, catalogId, fileList)-> str:
+    def getCsvName(self, catalogId, fileList) -> str:
         files = []
         if len(fileList) > 0:
             fileList.insert(0, catalogId)
@@ -87,7 +87,10 @@ class CatalogUsecases(CatalogRepo):
                     files.append(file)
             if len(files) > 0:
                 combined_csv = pd.concat([pd.read_csv(f) for f in files])
-                combined_csv.to_csv(self.filepath(filename), index=False, encoding='utf-8-sig')
+                combined_csv.to_csv(
+                    self.filepath(filename),
+                    index=False,
+                    encoding='utf-8-sig')
             return filename
         return catalogId
 

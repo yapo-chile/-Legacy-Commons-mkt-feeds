@@ -40,7 +40,9 @@ def catalogGet(catalog_id) -> d.JSONType:
     '''Catalog route'''
     appendList = request.args.getlist("file", type=str)
     return h.CatalogHandler(config=CONFIG,
-                            logger=LOGGER).get(d.CatalogId(catalog_id), appendList)
+                            logger=LOGGER).get(
+                                d.CatalogId(catalog_id),
+                                appendList)
 
 # /refresh trigger process to delete db data and recreate it
 @APP.route('/refresh', methods=['GET'])
