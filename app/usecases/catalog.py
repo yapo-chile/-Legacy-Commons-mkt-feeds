@@ -1,6 +1,8 @@
 import numpy as np  # type: ignore
+import pandas as pd # type: ignore
 import threading
 import datetime
+from pathlib import Path
 from interfaces.repository.catalogRepo import CatalogRepo
 
 
@@ -70,6 +72,24 @@ class CatalogUsecases(CatalogRepo):
         t = threading.Thread(target=self.generateAll)
         t.start()
         return True
+
+    # getCsvName if fileList has values concat all csv files, store it
+    # and returns this new filename. Otherwise returns catalogId
+    def getCsvName(self, catalogId, fileList)-> str:
+        files = []
+        if len(fileList) > 0:
+            fileList.insert(0, catalogId)
+            filename = ""
+            for id in fileList:
+                file = Path(self.filepath(id)).absolute()
+                if file.is_file():
+                    filename += id + "_"
+                    files.append(file)
+            if len(files) > 0:
+                combined_csv = pd.concat([pd.read_csv(f) for f in files])
+                combined_csv.to_csv(self.filepath(filename), index=False, encoding='utf-8-sig')
+            return filename
+        return catalogId
 
     # filepath returns a file path using a catalogId
     def filepath(self, catalogId):  # type: ignore

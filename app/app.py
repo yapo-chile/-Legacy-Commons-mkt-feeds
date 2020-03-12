@@ -1,5 +1,5 @@
 import logging
-from flask import Flask
+from flask import Flask, request
 import domain as d
 import interfaces.handlers as h
 from infraestructure.config import Config
@@ -38,8 +38,9 @@ def catalogCreate(catalog_id) -> d.JSONType:
 @APP.route('/catalog/get/<catalog_id>', methods=['GET'])
 def catalogGet(catalog_id) -> d.JSONType:
     '''Catalog route'''
+    appendList = request.args.getlist("file", type=str)
     return h.CatalogHandler(config=CONFIG,
-                            logger=LOGGER).get(d.CatalogId(catalog_id))
+                            logger=LOGGER).get(d.CatalogId(catalog_id), appendList)
 
 # /refresh trigger process to delete db data and recreate it
 @APP.route('/refresh', methods=['GET'])
