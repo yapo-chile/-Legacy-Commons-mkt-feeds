@@ -9,24 +9,30 @@ from infraestructure.stringIteratorIO import StringIteratorIO,\
 from infraestructure import config
 
 DB_CONF = config.Database()
-DB_POOL = psycopg2.pool.SimpleConnectionPool(1, 10,
-                                             user=DB_CONF.user,
-                                             password=DB_CONF.password,
-                                             host=DB_CONF.host,
-                                             port=DB_CONF.port,
-                                             database=DB_CONF.dbname)
+DB_POOL = psycopg2.pool.ThreadedConnectionPool(
+    1, 10,
+    user=DB_CONF.user,
+    password=DB_CONF.password,
+    host=DB_CONF.host,
+    port=DB_CONF.port,
+    database=DB_CONF.dbname)
 
 
 @contextmanager
 def db():
-    conn = DB_POOL.getconn()
+    conn = psycopg2.connect(
+        user=DB_CONF.user,
+        password=DB_CONF.password,
+        host=DB_CONF.host,
+        port=DB_CONF.port,
+        database=DB_CONF.dbname)
     conn.set_client_encoding('UTF-8')
     cur = conn.cursor()
     try:
         yield conn, cur
     finally:
         cur.close()
-        DB_POOL.putconn(conn)
+        conn.close()
 
 
 def rawSqlToDict(query, param=None):

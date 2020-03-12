@@ -12,29 +12,36 @@ LOGGER = logging.getLogger(CONFIG.logger.LogLevel)
 LOGGER.setLevel(LOGGER.level)
 LOGGER.info(CONFIG)
 
-
+# /healthcheck returns service status
 @APP.route("/healthcheck", methods=['GET'])
 def healthcheck() -> d.JSONType:
     '''healthCheck route'''
     return h.healthcheckHandler()
 
+# /catalog/create trigger process to re-create all
+# files configured on config file
+@APP.route('/catalog/create', methods=['GET'])
+def catalogCreateAll() -> d.JSONType:
+    '''Catalog route'''
+    return h.CatalogHandler(config=CONFIG,
+                            logger=LOGGER).createAll()
 
-@APP.route('/catalog/create/<int:catalog_id>', methods=['GET'])
+# /catalog/create trigger process to re-create a
+# file configured on config file
+@APP.route('/catalog/create/<catalog_id>', methods=['GET'])
 def catalogCreate(catalog_id) -> d.JSONType:
     '''Catalog route'''
-    return h.CatalogHandler(d.CatalogId(catalog_id),
-                            config=CONFIG,
-                            logger=LOGGER).create()
+    return h.CatalogHandler(config=CONFIG,
+                            logger=LOGGER).create(d.CatalogId(catalog_id))
 
-
-@APP.route('/catalog/get/<int:catalog_id>', methods=['GET'])
+# /catalog/get/<catalog_id> returns a file using a catalog_id value
+@APP.route('/catalog/get/<catalog_id>', methods=['GET'])
 def catalogGet(catalog_id) -> d.JSONType:
     '''Catalog route'''
-    return h.CatalogHandler(d.CatalogId(catalog_id),
-                            config=CONFIG,
-                            logger=LOGGER).get()
+    return h.CatalogHandler(config=CONFIG,
+                            logger=LOGGER).get(d.CatalogId(catalog_id))
 
-
+# /refresh trigger process to delete db data and recreate it
 @APP.route('/refresh', methods=['GET'])
 def dataExtractor() -> d.JSONType:
     return h.dataExtractor.runExtractData()

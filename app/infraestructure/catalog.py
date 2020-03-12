@@ -7,25 +7,44 @@ import botocore
 
 # CatalogConf checks what set of confs are needed to generate the requested csv
 class CatalogConf():
-
-    def getCatalogConf(self, catalogId: d.CatalogId) -> d.JSONType:
+    # _getS3Resource gets s3 resource with a given session
+    def _getS3Resource(self):
         session = boto3.Session(
             aws_access_key_id=self.config.aws.accessKey,
             aws_secret_access_key=self.config.aws.secretKey,
             region_name=self.config.aws.region,
         )
-        s3 = session.resource('s3')
-        key = '{}/{}'.format(self.config.aws.bucketFolder,
-                             self.config.server.configFile)
+        return session.resource('s3')
+
+    # _getKey returns a key identifier to get a file on s3
+    def _getKey(self) -> str:
+        return '{}/{}'.format(
+            self.config.aws.bucketFolder,
+            self.config.server.configFile)
+
+    # _getS3Conf returns s3 file body
+    def _getS3Conf(self):
+        s3 = self._getS3Resource()
+        s3Object = s3.Object(self.config.aws.bucketName, self._getKey())
+        return s3Object.get()['Body'].read().decode('utf-8')
+
+    # getCatalogConf get config data on s3 file using a specific catalogId
+    def getCatalogConf(self, catalogId: d.CatalogId) -> d.JSONType:
         try:
-            s3Object = s3.Object(self.config.aws.bucketName, key)
-            s3Conf = s3Object.get()['Body'].read().decode('utf-8')
+            s3Conf = self._getS3Conf()
             data = json.loads(s3Conf)
             if str(catalogId) in data:
-                return d.JSONType(data[str(catalogId)])
+                return d.JSONType(data[catalogId])
             else:
-                self.logger.error("Catalog id not found in config file.")
-                return d.JSONType([{}])
+                return d.JSONType([])
         except botocore.exceptions.ClientError as e:
-            self.logger.error("The object does not exist.")
-            return d.JSONType([{}])
+            return d.JSONType([])
+
+    # getAllCatalogConf get all config data file on s3
+    def getAllCatalogConf(self) -> d.CatalogConfig:
+        try:
+            s3Conf = self._getS3Conf()
+            data = json.loads(s3Conf)
+            return d.CatalogConfig(data)
+        except botocore.exceptions.ClientError as e:
+            return None

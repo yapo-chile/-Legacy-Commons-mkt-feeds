@@ -13,39 +13,38 @@ class CatalogHandler(CatalogUsecases):
     # with a io string with a csv header response.
     def __init__(
             self,
-            catalogId: d.CatalogId,
             config,
             logger) -> None:
         self.config = config
         self.logger = logger
-        self.id = catalogId
 
-    def create(self):
-        resp = self.createCsv()
+    # create trigger process to re-create a file using catalogId
+    def create(self, catalogId):
+        resp = self.createCsv(catalogId)
         if resp:
             r = Response(202)
             return r.toJson(msg=d.JSONType({"status": "Creating"}))
         r = Response(400)
         return r.toJson(msg=d.JSONType({"status": "Failed to create csv"}))
 
+    # createAll trigger process to re-create all files configured
+    def createAll(self):
+        resp = self.createAllCsv()
+        if resp:
+            r = Response(202)
+            return r.toJson(msg=d.JSONType({"status": "Creating All"}))
+        r = Response(400)
+        return r.toJson(msg=d.JSONType({"status": "Failed to create all csv"}))
+
     # get func finds a file if exists and download it
-    def get(self):
-        file = Path(self.filepath()).absolute()
+    def get(self, catalogId):
+        file = Path(self.filepath(catalogId)).absolute()
         if file.is_file():
-            self.logger.info('catalog id {} downloaded'.format(self.id))
+            self.logger.info('catalog id {} downloaded'.format(catalogId))
             r = Response(200)
             return r.toCsv(file=file,
-                           filename=self.filename(include_time=True))
+                           filename=self.filename(
+                               catalogId,
+                               include_time=True))
         r = Response(404)
         return r.toJson(msg=d.JSONType({"status": "File doesnt exists"}))
-
-    @property
-    def id(self) -> d.CatalogId:
-        return self.__id
-
-    @id.setter
-    def id(self, catalogId: d.CatalogId) -> None:
-        # Validates that catalogId is not negative
-        if catalogId <= 0:
-            raise ValueError("Catalog id is not a valid value")
-        self.__id = catalogId
