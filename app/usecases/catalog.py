@@ -1,7 +1,6 @@
 import numpy as np  # type: ignore
 import threading
 import datetime
-import gc
 from interfaces.repository.catalogRepo import CatalogRepo
 
 
