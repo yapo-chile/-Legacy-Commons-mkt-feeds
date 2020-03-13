@@ -87,10 +87,15 @@ class CatalogUsecases(CatalogRepo):
                     files.append(file)
             if len(files) > 0:
                 combined_csv = pd.concat([pd.read_csv(f) for f in files])
+                catalogConfig = self.getCatalogConfig(catalogId)
+                columns = self.getOutputFields(catalogConfig)
+                delimiter = self.getOutputDelimiter(catalogConfig)
                 combined_csv.to_csv(
                     self.filepath(filename),
+                    sep=delimiter,
+                    header=True,
                     index=False,
-                    encoding='utf-8-sig')
+                    columns=columns)
             return filename
         return catalogId
 
