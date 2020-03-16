@@ -37,14 +37,15 @@ class CatalogHandler(CatalogUsecases):
         return r.toJson(msg=d.JSONType({"status": "Failed to create all csv"}))
 
     # get func finds a file if exists and download it
-    def get(self, catalogId):
-        file = Path(self.filepath(catalogId)).absolute()
+    def get(self, catalogId, fileList):
+        filename = self.getCsvName(catalogId, fileList)
+        file = Path(self.filepath(filename)).absolute()
         if file.is_file():
-            self.logger.info('catalog id {} downloaded'.format(catalogId))
+            self.logger.info('catalog id {} downloaded'.format(filename))
             r = Response(200)
             return r.toCsv(file=file,
                            filename=self.filename(
-                               catalogId,
+                               filename,
                                include_time=True))
         r = Response(404)
         return r.toJson(msg=d.JSONType({"status": "File doesnt exists"}))
