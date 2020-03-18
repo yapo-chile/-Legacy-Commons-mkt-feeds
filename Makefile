@@ -91,7 +91,7 @@ tests: check-style lints
 
 # Starts gunicorn locally simulating a dockerized enviroment
 gunicorn:
-	cd app && gunicorn -b ${SERVER_HOST}:${SERVER_PORT} --workers=6 --threads=4 --worker-class=gthread --log-level=debug --enable-stdio-inheritance --preload --capture-output app:APP
+	cd app && gunicorn -b ${SERVER_HOST}:${SERVER_PORT} --log-level=debug --enable-stdio-inheritance --preload --capture-output app:APP
 
 # shows app info
 info:
