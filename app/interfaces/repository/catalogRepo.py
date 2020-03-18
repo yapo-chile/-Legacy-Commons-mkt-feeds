@@ -81,7 +81,10 @@ class CatalogRepo(CatalogConf):
     def _applyCreateColumn(self, data, catalogConfig) -> pd.DataFrame:
         if "create_column" in catalogConfig:
             for k, v in catalogConfig["create_column"].items():
-                data[k] = data.eval(v)
+                if v in data.columns:
+                    data[k] = data.eval(v)
+                else:
+                    data[k] = v
         return data
 
     # getCatalog returns a dataframe filtered by catalogConfig parameters
