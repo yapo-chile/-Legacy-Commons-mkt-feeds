@@ -45,15 +45,20 @@ class CatalogRepo(CatalogConf):
         def getMultipleWords(words):
             list = words.split(",")
             return '(?<!no ){}'.format('|(?<!no )'.join(list))
+
         # translateCondition returns a condition to filter a dataframe
         def translateCondition(data, p):
             condition = None
             if "condition" not in p or "field" not in p or "values" not in p:
                 condition = None
             if p["condition"] == 'contains':
-                condition = data[p["field"]].str.contains(getMultipleWords(p["values"]))
+                condition = data[p["field"]].str.contains(
+                    getMultipleWords(p["values"])
+                )
             elif p["condition"] == 'not_contains':
-                condition = ~data[p["field"]].str.contains(getMultipleWords(p["values"]))
+                condition = ~data[p["field"]].str.contains(
+                    getMultipleWords(p["values"])
+                )
             elif p["condition"] == 'in':
                 condition = data[p["field"]].isin(p["values"])
             elif p["condition"] == 'not_in':
@@ -120,17 +125,21 @@ class CatalogRepo(CatalogConf):
 
     # _applyFormat returns a dataframe with columns format
     def _applyFormat(self, data, catalogConfig) -> pd.DataFrame:
-        def translateFormat(format_column, value, data) -> data:
+        def translateFormat(format_column, value, data) -> pd.DataFrame:
             if format_column == 'lowercase':
                 if value == 'all':
-                    data = data.applymap(lambda s: s.lower() if isinstance(s, str) else s)
+                    data = data.applymap(
+                        lambda s: s.lower() if isinstance(s, str) else s
+                    )
                 elif value in data.columns:
                     data = data[value].str.lower()
                 else:
                     print("Column not found ", value)
             elif format_column == 'uppercase':
                 if value == 'all':
-                    data = data.applymap(lambda s: s.upper() if isinstance(s, str) else s)
+                    data = data.applymap(
+                        lambda s: s.upper() if isinstance(s, str) else s
+                    )
                 elif value in data.columns:
                     data = data[value].str.upper()
                 else:
