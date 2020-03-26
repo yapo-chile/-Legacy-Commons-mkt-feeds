@@ -284,7 +284,7 @@ class extractFeed(object):
             case
                 when ap.value = '1' then 'new'
                 when ap.value = '2' then 'used'
-                else 'null'
+                else 'used'
             end as "condition",
             '-' as ios_url,
             '767503903' as ios_app_store_id,
