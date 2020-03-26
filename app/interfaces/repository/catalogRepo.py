@@ -46,6 +46,10 @@ class CatalogRepo(CatalogConf):
             list = words.split(",")
             return '(?<!no ){}'.format('|(?<!no )'.join(list))
 
+        # getWordsList returns a list like object
+        def getWordsList(words):
+            return words.split(",")
+
         # translateCondition returns a condition to filter a dataframe
         def translateCondition(data, p):
             condition = None
@@ -60,9 +64,13 @@ class CatalogRepo(CatalogConf):
                     getMultipleWords(p["values"])
                 )
             elif p["condition"] == 'in':
-                condition = data[p["field"]].isin(p["values"])
+                condition = data[p["field"]].isin(
+                    getWordsList(p["values"])
+                )
             elif p["condition"] == 'not_in':
-                condition = ~data[p["field"]].isin(p["values"])
+                condition = ~data[p["field"]].isin(
+                    getWordsList(p["values"])
+                )
             return condition
         if "params_list" in catalogConfig and \
                 len(catalogConfig["params_list"]) > 0:
