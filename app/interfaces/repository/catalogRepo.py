@@ -51,6 +51,9 @@ class CatalogRepo(CatalogConf):
             return words.split(",")
 
         # translateCondition returns a condition to filter a dataframe
+        # condition should be a boolean vector or None
+        # to do that operators on condition should be bitwise
+        # (| for or, & for and, and ~ for not)
         def translateCondition(data, p):
             condition = None
             if "condition" not in p or "field" not in p or "values" not in p:
