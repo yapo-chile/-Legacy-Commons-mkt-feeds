@@ -54,6 +54,8 @@ class CatalogRepo(CatalogConf):
         # condition should be a boolean vector or None
         # to do that operators on condition should be bitwise
         # (| for or, & for and, and ~ for not)
+        # https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html
+        # https://stackoverflow.com/questions/36921951/truth-value-of-a-series-/is-ambiguous-use-a-empty-a-bool-a-item-a-any-o
         def translateCondition(data, p):
             condition = None
             if "condition" not in p or "field" not in p or "values" not in p:
