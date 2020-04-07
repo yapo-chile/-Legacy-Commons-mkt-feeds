@@ -30,23 +30,9 @@ echo "GIT BRANCH: ${GIT_BRANCH}"
 echo "GIT COMMIT: ${GIT_COMMIT}"
 echo "GIT COMMIT SHORT: ${GIT_COMMIT_SHORT}"
 echo "BUILD CREATOR: ${BUILD_CREATOR}"
-echo "BUILD NAME: ${DOCKER_IMAGE}:${GIT_BRANCH}"
+echo "BUILD NAME: ${DOCKER_IMAGE}:${BRANCH}"
 
-export GIT_BRANCH_LOWERCASE=$(echo "${GIT_BRANCH}" | awk '{print tolower($0)}'| sed 's/\//_/;')
-DOCKER_ARGS=" --no-cache"
-
-if [[ "$GIT_TAG" != "" ]]; then
-     DOCKER_ARGS="${DOCKER_ARGS} \
-         -t ${DOCKER_IMAGE}:${GIT_TAG}"
-elif [[ "${GIT_BRANCH_LOWERCASE}" == "master" ]]; then
-     DOCKER_ARGS="${DOCKER_ARGS} \
-         -t ${DOCKER_IMAGE}:${GIT_BRANCH_LOWERCASE} -t ${DOCKER_IMAGE}:latest"
-else
-     DOCKER_ARGS="${DOCKER_ARGS} \
-         -t ${DOCKER_IMAGE}:${GIT_BRANCH_LOWERCASE}"
-fi
-
-DOCKER_ARGS=" -t ${DOCKER_IMAGE}-proxy:${GIT_BRANCH} \
+DOCKER_ARGS=" -t ${DOCKER_IMAGE}-proxy:${BRANCH} \
     -f nginx/dockerfile \
     ."
 

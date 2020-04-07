@@ -2,14 +2,11 @@
 export UNAMESTR=$(uname)
 
 # GIT variables
-export BRANCH=$(shell git branch | sed -n 's/^\* //p')
-export GIT_BRANCH=$(shell if [ -n "${BUILD_BRANCH}" ]; then echo "${BUILD_BRANCH}"; else echo "${BRANCH}"; fi;)
 export GIT_COMMIT=$(shell git rev-parse HEAD)
 export GIT_COMMIT_SHORT=$(shell git rev-parse --short HEAD)
 export GIT_TAG=$(shell git tag -l --points-at HEAD | tr '\n' '_' | sed 's/_$$//;')
 export GIT_COMMIT_DATE=$(shell TZ="America/Santiago" git show --quiet --date='format-local:%d-%m-%Y_%H:%M:%S' --format="%cd")
 export BUILD_CREATOR=$(shell git log --format=format:%ae | head -n 1)
-export GIT_BRANCH_LOWERCASE=$(shell echo "${GIT_BRANCH}" | sed 's/\//_/;')
 
 # REPORT_ARTIFACTS should be in sync with `RegexpFilePathMatcher` in
 # `reports-publisher/config.json`
@@ -18,7 +15,7 @@ export REPORT_ARTIFACTS=reports
 #APP variables
 genport = $(shell expr \( $(shell id -u) - \( $(shell id -u) / 100 \) \* 100 \) \* 200 + 30400 + $(1))
 
-export APPNAME=feeds
+export APPNAME=mkt-feeds
 export VERSION=0.0.1
 export EXEC=./${APPNAME}
 export YO=$(shell expr `whoami`)
@@ -57,8 +54,8 @@ export LOGGER_LOG_LEVEL=gunicorn.error
 export LOCAL_REGISTRY=registry01.msf.yapo.cl
 export DOCKER_REGISTRY=containers.mpi-internal.com
 export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
-export DOCKER_IMAGE_COMPOSE=${DOCKER_IMAGE}:${GIT_BRANCH}
-export DOCKER_IMAGE_PROXY_COMPOSE=${DOCKER_IMAGE}-proxy:${GIT_BRANCH}
+export DOCKER_IMAGE_COMPOSE=${DOCKER_IMAGE}:${BRANCH}
+export DOCKER_IMAGE_PROXY_COMPOSE=${DOCKER_IMAGE}-proxy:${BRANCH}
 export DOCKER_GATEWAY_PORT=$(call genport,4)
 export DOCKER_CONTAINER_NAME=${APPNAME}-core
 
