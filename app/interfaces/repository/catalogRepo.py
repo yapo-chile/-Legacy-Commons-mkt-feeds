@@ -124,7 +124,7 @@ class CatalogRepo(CatalogConf):
     # _urlParse returns url safe string
     def _urlParse(self, url) -> str:
         url = " ".join(url.split())
-        url = parse.quote(url, safe='/,:')
+        url = parse.quote(url, safe="/:?#[]@!$&'()*+;=")
         return url
 
     # _applyFields returns a dataframe with renamed columns
