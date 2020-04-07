@@ -1,5 +1,6 @@
 import domain as d
 import pandas as pd  # type: ignore
+from urllib import parse
 from typing import List
 from infraestructure.pgsql import Pgsql  # type: ignore
 from infraestructure.catalog import CatalogConf  # type: ignore
@@ -120,6 +121,12 @@ class CatalogRepo(CatalogConf):
     def _getData(self) -> pd.DataFrame:
         return Pgsql().select(query=self._getQueryCatalog())
 
+    # _urlParse returns url safe string
+    def _urlParse(self, url) -> str:
+        url = " ".join(url.split())
+        url = parse.quote(url, safe="/:?#[]@!$&'()*+;=")
+        return url
+
     # _applyFields returns a dataframe with renamed columns
     def _applyFields(self, data, catalogConfig) -> pd.DataFrame:
         if len(catalogConfig["fields"]) > 0:
@@ -175,7 +182,9 @@ class CatalogRepo(CatalogConf):
 
     # getRawCatalog returns a dataframe with all the data
     def getRawCatalog(self) -> pd.DataFrame:
-        return self._getData()
+        data = self._getData()
+        data['url'] = data.url.apply(self._urlParse)
+        return data
 
     # getCatalogConfig returns a specific catalogConfig
     def getCatalogConfig(self, catalogId) -> d.CatalogConfig:
