@@ -15,11 +15,12 @@ echo "BUILD NAME: ${DOCKER_IMAGE}:${GIT_BRANCH}"
 DOCKER_ARGS=" ${DOCKER_ARGS} \
 	-t ${DOCKER_IMAGE}:${DOCKER_TAG} \
 	-t ${DOCKER_IMAGE}:${COMMIT_DATE_UTC} \
-    --build-arg GIT_BRANCH="$BRANCH" \
-    --build-arg GIT_COMMIT="$GIT_COMMIT" \
-    --build-arg TAG="${DOCKER_IMAGE}:${BUILD_TAG}" \
-    --build-arg BUILD_CREATOR="$BUILD_CREATOR" \
-    --build-arg VERSION="$VERSION" \
+    --label GIT_BRANCH="$BRANCH" \
+    --label GIT_COMMIT="$GIT_COMMIT" \
+    --label TAG="${DOCKER_IMAGE}:${BUILD_TAG}" \
+    --label BUILD_CREATOR="$BUILD_CREATOR" \
+    --label VERSION="$VERSION" \
+    --label APPNAME="$APPNAME" \
     --build-arg APPNAME="$APPNAME" \
     -f app/dockerfile \
     app/."

@@ -1,4 +1,7 @@
 FROM python:3.7.2-slim
+
+ARG APPNAME
+
 COPY . /app
 WORKDIR /app
 
