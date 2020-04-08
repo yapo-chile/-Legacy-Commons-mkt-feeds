@@ -42,7 +42,8 @@ class Database(NamedTuple):
     dbname: str = getValue("DATABASE_NAME", "feeds-db")
     user: str = getValue("DATABASE_USER", "docker")
     password: str = getValue("DATABASE_PASSWORD_FILE", "docker")
-    tableName: str = getValue("DATABASE_TABLE_NAME", "public.data_feed")
+    tableName: str = getValue("DATABASE_TABLE_NAME", "data_feed")
+    migrations: str = getValue("DATABASE_MIGRATIONS_FOLDER", "migrations")
 
 
 class DatabaseSource(NamedTuple):

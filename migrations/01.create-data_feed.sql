@@ -1,4 +1,4 @@
-CREATE TABLE public.data_feed (
+CREATE TABLE data_feed (
 	ad_id text NULL PRIMARY KEY,
 	ad_insertion text NULL,
 	"name" text NULL,
