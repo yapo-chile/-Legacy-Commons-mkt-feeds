@@ -77,3 +77,4 @@ widgetsnbextension==3.5.1
 zict==1.0.0
 mypy==0.740
 psycopg2-binary==2.8.4
+yoyo-migrations==7.0.2

@@ -3,9 +3,14 @@ from flask import Flask, request
 import domain as d
 import interfaces.handlers as h
 from infraestructure.config import Config
+from infraestructure.migrations import Migrations
+
 
 APP = Flask(__name__)
 CONFIG: Config = Config()
+MIGRATIONS: Migrations = Migrations()
+
+MIGRATIONS.migrate()
 
 # Logger initial conf
 LOGGER = logging.getLogger(CONFIG.logger.LogLevel)
