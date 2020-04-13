@@ -76,17 +76,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: resource-external-blocketdb-slave
-                  key: host
+                  key: HOST
             - name: SOURCEDATA_PORT
               valueFrom:
                 secretKeyRef:
                   name: resource-external-blocketdb-slave
-                  key: port
+                  key: PORT
             - name: SOURCEDATA_NAME
               valueFrom:
                 secretKeyRef:
                   name: resource-external-blocketdb-slave
-                  key: database
+                  key: DB
             - name: SOURCEDATA_USER
               valueFrom:
                 secretKeyRef:
