@@ -32,8 +32,8 @@ deploy:
     on:
       all_branches: true
       condition: $TRAVIS_PULL_REQUEST = false
-      #  - provider: script
-      #    script: make helm-publish
-      #    on:
-      #      all_branches: true
-      #      condition: $TRAVIS_PULL_REQUEST = false
+  - provider: script
+    script: make helm-publish
+    on:
+      all_branches: true
+      condition: $TRAVIS_PULL_REQUEST = false
