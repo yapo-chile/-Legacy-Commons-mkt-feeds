@@ -44,6 +44,8 @@ class Database(NamedTuple):
     password: str = getValue("DATABASE_PASSWORD_FILE", "docker")
     tableName: str = getValue("DATABASE_TABLE_NAME", "data_feed")
     migrations: str = getValue("DATABASE_MIGRATIONS_FOLDER", "migrations")
+    maxretries: int = int(getValue("DATABASE_MAX_RETRIES", "10"))
+    retryTimeout: int = int(getValue("DATABASE_RETRY_TIMEOUT", "10"))
 
 
 class DatabaseSource(NamedTuple):

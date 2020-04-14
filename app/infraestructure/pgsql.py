@@ -1,5 +1,6 @@
 from typing import Iterator, Dict, Any
 import logging
+import time
 import pandas as pd  # type: ignore
 import psycopg2  # type: ignore
 from psycopg2 import pool
@@ -8,24 +9,15 @@ from infraestructure.stringIteratorIO import StringIteratorIO,\
     cleanCsvValue, cleanStrValue
 from infraestructure import config
 
-DB_CONF = config.Database()
-DB_POOL = psycopg2.pool.ThreadedConnectionPool(
-    1, 10,
-    user=DB_CONF.user,
-    password=DB_CONF.password,
-    host=DB_CONF.host,
-    port=DB_CONF.port,
-    database=DB_CONF.dbname)
-
 
 @contextmanager
-def db():
+def db(conf):
     conn = psycopg2.connect(
-        user=DB_CONF.user,
-        password=DB_CONF.password,
-        host=DB_CONF.host,
-        port=DB_CONF.port,
-        database=DB_CONF.dbname)
+        user=conf.user,
+        password=conf.password,
+        host=conf.host,
+        port=conf.port,
+        database=conf.dbname)
     conn.set_client_encoding('UTF-8')
     cur = conn.cursor()
     try:
@@ -72,18 +64,59 @@ def rawSqlToDict(query, param=None):
     return result
 
 
-class Pgsql():
+class Pgsql:
+    def __init__(self):
+        self.dbconf = config.Database()
+        self.dbpool = None
+        self.log = logging.getLogger('database')
+        date_format = """%(asctime)s,%(msecs)d %(levelname)-2s """
+        info_format = """[%(filename)s:%(lineno)d] %(message)s"""
+        log_format = date_format + info_format
+        logging.basicConfig(format=log_format, level=logging.INFO)
+
+    # start tries to get a connection pool with database
+    # and retries maxretries times if connections fails
+    # returns True if connection is done successfully otherwise False
+    def start(self) -> bool:
+        for retry in range(self.dbconf.maxretries):
+            self._poolConnect()
+            if self.dbpool is not None:
+                return True
+            self.log.info(
+                "waiting %d sec to retry db connection ...",
+                self.dbconf.retryTimeout
+            )
+            time.sleep(self.dbconf.retryTimeout)
+        self.log.info("Max retries")
+        return False
+
+    # _poolConnect tries to create a threaded connection pool with db
+    # if anything goes wrong logs error
+    def _poolConnect(self):
+        try:
+            self.dbpool = psycopg2.pool.ThreadedConnectionPool(
+                1, 10,
+                user=self.dbconf.user,
+                password=self.dbconf.password,
+                host=self.dbconf.host,
+                port=self.dbconf.port,
+                database=self.dbconf.dbname)
+        except psycopg2.pool.PoolError as error:
+            self.log.error('Connection pool error: %s', error)
+        except psycopg2.OperationalError as error:
+            self.log.error('Operational connection error: %s', error)
 
     def select(self, query: str) -> pd.DataFrame:
-        with db() as (conn, cursor):
+        with db(self.dbconf) as (conn, cursor):
             cursor.execute(query)
+            conn.commit()
             data = pd.DataFrame(cursor.fetchall())
             data.columns = [name[0] for name in cursor.description]
             return data
 
     def truncate(self) -> pd.DataFrame:
-        with db() as (conn, cursor):
-            cursor.execute("TRUNCATE {};".format(DB_CONF.tableName))
+        with db(self.dbconf) as (conn, cursor):
+            cursor.execute("TRUNCATE {};".format(self.dbconf.tableName))
             conn.commit()
             return True
         return False

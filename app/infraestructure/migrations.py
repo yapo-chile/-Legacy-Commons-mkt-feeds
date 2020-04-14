@@ -3,11 +3,10 @@ from infraestructure import config
 from yoyo import read_migrations  # type: ignore
 from yoyo import get_backend  # type: ignore
 
-DB_CONF = config.Database()
-
 
 class Migrations():
     def __init__(self):
+        self.dbconfig = config.Database()
         self.log = logging.getLogger('database')
         date_format = """%(asctime)s,%(msecs)d %(levelname)-2s """
         info_format = """[%(filename)s:%(lineno)d] %(message)s"""
@@ -18,7 +17,7 @@ class Migrations():
     def migrate(self):
         self.log.info("Setting up Migrations")
         backend = get_backend(self._getConnection())
-        migrations = read_migrations(DB_CONF.migrations)
+        migrations = read_migrations(self.dbconfig.migrations)
         with backend.lock():
             try:
                 new_migrations = backend.to_apply(migrations)
@@ -42,10 +41,10 @@ class Migrations():
     # _getConnection return connection string to db
     def _getConnection(self):
         return '{driver}://{user}:{password}@{host}:{port}/{database}'.format(
-            driver=DB_CONF.driver,
-            user=DB_CONF.user,
-            password=DB_CONF.password,
-            host=DB_CONF.host,
-            port=DB_CONF.port,
-            database=DB_CONF.dbname
+            driver=self.dbconfig.driver,
+            user=self.dbconfig.user,
+            password=self.dbconfig.password,
+            host=self.dbconfig.host,
+            port=self.dbconfig.port,
+            database=self.dbconfig.dbname
         )

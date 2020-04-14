@@ -4,18 +4,26 @@ import domain as d
 import interfaces.handlers as h
 from infraestructure.config import Config
 from infraestructure.migrations import Migrations
+from infraestructure.pgsql import Pgsql
 
 
 APP = Flask(__name__)
 CONFIG: Config = Config()
-MIGRATIONS: Migrations = Migrations()
-
-MIGRATIONS.migrate()
 
 # Logger initial conf
 LOGGER = logging.getLogger(CONFIG.logger.LogLevel)
 LOGGER.setLevel(LOGGER.level)
 LOGGER.info(CONFIG)
+
+# Start Database
+DB: Pgsql = Pgsql()
+if not DB.start():
+    LOGGER.error("Error with Database, closing ....")
+    exit(0)
+
+# Apply migrations
+MIGRATIONS: Migrations = Migrations()
+MIGRATIONS.migrate()
 
 # /healthcheck returns service status
 @APP.route("/healthcheck", methods=['GET'])
