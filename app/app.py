@@ -1,4 +1,5 @@
 import logging
+import sys
 from flask import Flask, request
 import domain as d
 import interfaces.handlers as h
@@ -19,7 +20,7 @@ LOGGER.info(CONFIG)
 DB: Pgsql = Pgsql()
 if not DB.start():
     LOGGER.error("Error with Database, closing ....")
-    exit(0)
+    sys.exit()
 
 # Apply migrations
 MIGRATIONS: Migrations = Migrations()
