@@ -3,8 +3,8 @@ import logging
 import time
 import pandas as pd  # type: ignore
 import psycopg2  # type: ignore
-from psycopg2 import pool
 from contextlib import contextmanager
+from psycopg2 import pool
 from infraestructure.stringIteratorIO import StringIteratorIO,\
     cleanCsvValue, cleanStrValue
 from infraestructure import config
@@ -65,8 +65,8 @@ def rawSqlToDict(query, param=None):
 
 
 class Pgsql:
-    def __init__(self):
-        self.dbconf = config.Database()
+    def __init__(self, dbconfig):
+        self.dbconf = dbconfig
         self.dbpool = None
         self.log = logging.getLogger('database')
         date_format = """%(asctime)s,%(msecs)d %(levelname)-2s """
@@ -121,36 +121,36 @@ class Pgsql:
             return True
         return False
 
-
-class writeDatabase:
-    def __init__(self):
+    def makeconnection(self):
         self.log = logging.getLogger('database')
         date_format = """%(asctime)s,%(msecs)d %(levelname)-2s """
         info_format = """[%(filename)s:%(lineno)d] %(message)s"""
         log_format = date_format + info_format
         logging.basicConfig(format=log_format, level=logging.INFO)
-        self.connection = None
-        self.getConnection()
+        return self.getConnection()
 
     def getConnection(self):
         dbw = config.Database()
         self.log.info('getConnection DB %s/%s', dbw.host, dbw.dbname)
-        self.connection = psycopg2.connect(user=dbw.user,
-                                           password=dbw.password,
-                                           host=dbw.host,
-                                           port=dbw.port,
-                                           database=dbw.dbname)
+        return psycopg2.connect(user=dbw.user,
+                                password=dbw.password,
+                                host=dbw.host,
+                                port=dbw.port,
+                                database=dbw.dbname)
 
-    def executeCommand(self, command):
+    def executeCommand(self, connection, command):
         self.log.info('executeCommand : %s', command)
-        cursor = self.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(command)
-        self.connection.commit()
+        connection.commit()
         cursor.close()
 
-    def copyStringIter(self, tableName, dataDict: Iterator[Dict[str, Any]]):
+    def copyStringIter(self,
+                       connection,
+                       tableName,
+                       dataDict: Iterator[Dict[str, Any]]):
         self.log.info('copyStringIterator init CURSOR %s.', tableName)
-        with self.connection.cursor() as cursor:
+        with connection.cursor() as cursor:
             stringData = StringIteratorIO((
                 '|'.join(map(cleanCsvValue, (
                     rowDict['ad_id'],
@@ -179,9 +179,9 @@ class writeDatabase:
             self.log.info('Preparing data for insert.')
             cursor.copy_from(stringData, tableName, sep='|')
             self.log.info('copyStringIterator COMMIT.')
-            self.connection.commit()
+            connection.commit()
             self.log.info('Close cursor %s', tableName)
             cursor.close()
 
-    def closeConnection(self):
-        self.connection.close()
+    def closeConnection(self, connection):
+        connection.close()

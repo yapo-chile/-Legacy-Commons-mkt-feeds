@@ -32,11 +32,11 @@ class Server(NamedTuple):
     Port: int = int(getValue("SERVER_PORT", "5000"))
     tmpLocation: str = getValue("SERVER_TMP_LOCATION", "tmp")
     Debug: bool = json.loads(getValue("SERVER_DEBUG", 'true'))
-    configFile: str = getValue("SERVER_CONFIG_FILE", "catalog.json")
 
 
 # Database tuple that contains all definitions for its conection
 class Database(NamedTuple):
+    driver: str = getValue("DATABASE_DRIVER", "postgres")
     host: str = getValue("DATABASE_HOST", "0.0.0.0")
     port: int = int(getValue("DATABASE_PORT", "5432"))
     dbname: str = getValue("DATABASE_NAME", "feeds-db")
@@ -62,6 +62,7 @@ class AWS(NamedTuple):
     bucketName: str = getValue("AWS_STORAGE_BUCKET_NAME", "mkt-feeds")
     bucketFolder: str = getValue("AWS_STORAGE_BUCKET_FOLDER", "config")
     region: str = getValue("AWS_REGION_NAME", "us-east-1")
+    configFile: str = getValue("SERVER_CONFIG_FILE", "catalog.json")
 
 
 # Config type to contain all definitions of configs

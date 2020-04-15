@@ -5,8 +5,8 @@ from yoyo import get_backend  # type: ignore
 
 
 class Migrations():
-    def __init__(self):
-        self.dbconfig = config.Database()
+    def __init__(self, config):
+        self.dbconfig = config
         self.log = logging.getLogger('database')
         date_format = """%(asctime)s,%(msecs)d %(levelname)-2s """
         info_format = """[%(filename)s:%(lineno)d] %(message)s"""
