@@ -3,23 +3,27 @@ import pandas as pd  # type: ignore
 import threading
 import datetime
 from pathlib import Path
-from interfaces.repository.catalogRepo import CatalogRepo
 
 
 # CatalogUsecases receives a catalog id and if valid returns a size-fixed
 # data matrix.
-class CatalogUsecases(CatalogRepo):
+class CatalogUsecases():
+    def __init__(self, catalogRepo, config, logger):
+        self.catalogRepo = catalogRepo
+        self.logger = logger
+        self.location = config.tmpLocation
+
     # generate gets catalog data and generates a new file using catalogId
     def generate(self, catalogId) -> bool:
-        catalogRaw = self.getRawCatalog()
-        catalogConfig = self.getCatalogConfig(catalogId)
+        catalogRaw = self.catalogRepo.getRawCatalog()
+        catalogConfig = self.catalogRepo.getCatalogConfig(catalogId)
         return self.generateFromCatalog(catalogRaw, catalogConfig, catalogId)
 
     # generateFromCatalog generates a catalog filtered by catalogConfig
     # and creates a new csv file using a specifi catalogId.
     # Returns false if process fails, otherwise returns true
     def generateFromCatalog(self, catalogRaw, catalogConfig, catalogId):
-        catalog = self.getCatalog(catalogRaw, catalogConfig)
+        catalog = self.catalogRepo.getCatalog(catalogRaw, catalogConfig)
         if catalog.empty:
             self.logger.info(
                 'No rows found for catalog id {}, returning empty file'.format(
@@ -28,8 +32,8 @@ class CatalogUsecases(CatalogRepo):
             del catalogRaw
             del catalogConfig
             return False
-        columns = self.getOutputFields(catalogConfig)
-        delimiter = self.getOutputDelimiter(catalogConfig)
+        columns = self.catalogRepo.getOutputFields(catalogConfig)
+        delimiter = self.catalogRepo.getOutputDelimiter(catalogConfig)
 
         # Leaving this commented so would be used to check
         # repeated rows in the future
@@ -54,8 +58,8 @@ class CatalogUsecases(CatalogRepo):
     # and iterate over them to re-create all files.
     # Returns true when process is done
     def generateAll(self):
-        catalogAllConfig = self.getAllCatalogConfig()
-        catalogRaw = self.getRawCatalog()
+        catalogAllConfig = self.catalogRepo.getAllCatalogConfig()
+        catalogRaw = self.catalogRepo.getRawCatalog()
         for key, catalogConfig in catalogAllConfig.items():
             self.generateFromCatalog(catalogRaw, catalogConfig, key)
         del catalogRaw
@@ -87,9 +91,9 @@ class CatalogUsecases(CatalogRepo):
                     files.append(file)
             if len(files) > 0:
                 combined_csv = pd.concat([pd.read_csv(f) for f in files])
-                catalogConfig = self.getCatalogConfig(catalogId)
-                columns = self.getOutputFields(catalogConfig)
-                delimiter = self.getOutputDelimiter(catalogConfig)
+                catalogConfig = self.catalogRepo.getCatalogConfig(catalogId)
+                columns = self.catalogRepo.getOutputFields(catalogConfig)
+                delimiter = self.catalogRepo.getOutputDelimiter(catalogConfig)
                 combined_csv.to_csv(
                     self.filepath(filename),
                     sep=delimiter,
@@ -101,7 +105,7 @@ class CatalogUsecases(CatalogRepo):
 
     # filepath returns a file path using a catalogId
     def filepath(self, catalogId):  # type: ignore
-        return "{}/{}".format(self.config.server.tmpLocation,
+        return "{}/{}".format(self.location,
                               self.filename(catalogId))
 
     # filename returns a file name using a catalogId
