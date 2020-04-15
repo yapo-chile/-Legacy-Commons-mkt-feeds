@@ -1,12 +1,13 @@
-#  type: ignore
-import domain as d
 import json
-import boto3
-import botocore
+import boto3  # type: ignore
+import botocore  # type: ignore
+import domain as d
+from typing import Any, Dict
 
 
-# CatalogConf checks what set of confs are needed to generate the requested csv
-class CatalogConf():
+class CatalogConf:
+    # CatalogConf checks what set of confs are needed
+    # to generate the requested csv
     def __init__(self, conf):
         self.conf = conf
 
@@ -39,9 +40,9 @@ class CatalogConf():
             if str(catalogId) in data:
                 return d.JSONType(data[catalogId])
             else:
-                return d.JSONType([])
+                return d.JSONType(Dict[str, Any]())
         except botocore.exceptions.ClientError as e:
-            return d.JSONType([])
+            return d.JSONType(Dict[str, Any]())
 
     # getAllCatalogConf get all config data file on s3
     def getAllCatalogConf(self) -> d.CatalogConfig:
@@ -50,4 +51,4 @@ class CatalogConf():
             data = json.loads(s3Conf)
             return d.CatalogConfig(data)
         except botocore.exceptions.ClientError as e:
-            return None
+            return d.CatalogConfig(Dict[str, d.JSONType]())
