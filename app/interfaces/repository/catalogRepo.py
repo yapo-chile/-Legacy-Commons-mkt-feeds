@@ -5,7 +5,7 @@ from typing import List
 
 
 class CatalogRepo():
-    def __init__(self, db, catalogConf):
+    def __init__(self, db, catalogConf) -> None:
         self.catalog: pd.DataFrame = pd.DataFrame([])
         self.db = db
         self.catalogConf = catalogConf

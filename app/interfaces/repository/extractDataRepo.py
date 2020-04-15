@@ -7,7 +7,7 @@ from infraestructure.pgsql import rawSqlToDict
 # ExtractDataRepo reads ads from source providers db
 # and insert them in app db
 class ExtractDataRepo():
-    def __init__(self, db, config):
+    def __init__(self, db, config) -> None:
         self.log = logging.getLogger('extractData')
         self.db = db
         self.tableName = config.tableName

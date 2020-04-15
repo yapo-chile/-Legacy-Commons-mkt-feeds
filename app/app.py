@@ -60,7 +60,7 @@ HEALTHCHECK_HANDLER = h.HealthcheckHandler()
 @APP.route("/healthcheck", methods=['GET'])
 def healthcheck() -> d.JSONType:
     '''healthCheck route'''
-    return HEALTHCHECK_HANDLER.healthcheck()
+    return HEALTHCHECK_HANDLER.status()
 
 # /catalog/create trigger process to re-create all
 # files configured on config file
