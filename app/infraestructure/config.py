@@ -5,20 +5,20 @@ from typing import NamedTuple
 
 def getValue(env, default=""):
     if env.endswith("FILE"):
-        val = getValueFromFile(env, default)
+        val = getValueFromFile(env)
         return val if val.strip() else environ.get(env[:-5], default)
     return environ.get(env, default)
 
 
-def getValueFromFile(env, default):
+def getValueFromFile(env):
     try:
         file = environ.get(env)
         if file is not None:
             fileData = open(file)
             return fileData.readline()
-        return default
+        return ""
     except IOError:
-        return default
+        return ""
 
 
 # Logger tuple that contain all definitions for logging usage
