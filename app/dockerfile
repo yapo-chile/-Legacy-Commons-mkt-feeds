@@ -2,7 +2,8 @@ FROM python:3.7.2-slim
 
 ARG APPNAME
 
-COPY . /app
+COPY ./app /app
+COPY ./migrations /app/migrations
 WORKDIR /app
 
 ENV PS1="\[\e[1;32m\]$APPNAME \[\e[1;31m\][`pwd`] # \[\e[0m\]"
@@ -13,7 +14,7 @@ RUN apt-get update \
     && pip install -r requirements.txt \
     && apt-get purge -y --auto-remove gcc build-essential
 
-COPY scripts/entrypoint.sh /entrypoint.sh
+COPY app/scripts/entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r//' /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

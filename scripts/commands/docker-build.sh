@@ -23,7 +23,7 @@ DOCKER_ARGS=" ${DOCKER_ARGS} \
     --label APPNAME="$APPNAME" \
     --build-arg APPNAME="$APPNAME" \
     -f app/dockerfile \
-    app/."
+    ."
 
 echo "args: ${DOCKER_ARGS}"
 set -x
