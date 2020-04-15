@@ -54,7 +54,7 @@ DATA_EXTRACTOR_HANDLER = h.DataExtractorHandler(
     dataextractor=REFRESH
 )
 
-HEALTHCHECK_HANDLER = h.healthcheckHandler()
+HEALTHCHECK_HANDLER = h.HealthcheckHandler()
 
 # /healthcheck returns service status
 @APP.route("/healthcheck", methods=['GET'])

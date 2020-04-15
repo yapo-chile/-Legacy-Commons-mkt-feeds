@@ -5,7 +5,7 @@ import domain as d
 from typing import Any, Dict
 
 
-class CatalogConf:
+class CatalogConf():
     # CatalogConf checks what set of confs are needed
     # to generate the requested csv
     def __init__(self, conf):
