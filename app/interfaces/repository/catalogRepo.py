@@ -2,13 +2,13 @@ import domain as d
 import pandas as pd  # type: ignore
 from urllib import parse
 from typing import List
-from infraestructure.pgsql import Pgsql  # type: ignore
-from infraestructure.catalog import CatalogConf  # type: ignore
 
 
-class CatalogRepo(CatalogConf):
-    def __init__(self) -> None:
+class CatalogRepo():
+    def __init__(self, db, catalogConf) -> None:
         self.catalog: pd.DataFrame = pd.DataFrame([])
+        self.db = db
+        self.catalogConf = catalogConf
 
     # _parseParams get conditions and generate a query filter
     def _parseParams(self, params) -> str:
@@ -119,7 +119,7 @@ class CatalogRepo(CatalogConf):
 
     # _getData returns a dataframe using a given sql query
     def _getData(self) -> pd.DataFrame:
-        return Pgsql().select(query=self._getQueryCatalog())
+        return self.db.select(query=self._getQueryCatalog())
 
     # _urlParse returns url safe string
     def _urlParse(self, url) -> str:
@@ -188,11 +188,11 @@ class CatalogRepo(CatalogConf):
 
     # getCatalogConfig returns a specific catalogConfig
     def getCatalogConfig(self, catalogId) -> d.CatalogConfig:
-        return self.getCatalogConf(catalogId)
+        return self.catalogConf.getCatalogConf(catalogId)
 
     # getAllCatalogConfig returns all catalogConfig present on config file
     def getAllCatalogConfig(self) -> d.CatalogConfig:
-        return self.getAllCatalogConf()
+        return self.catalogConf.getAllCatalogConf()
 
     # getOutputFields returns a List with all configured output columns
     def getOutputFields(self, catalogConfig) -> List[str]:

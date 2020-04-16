@@ -1,18 +1,16 @@
 # coding=utf-8
 import datetime
 import logging
-import pandas as pd  # type: ignore
-import threading
-from infraestructure.pgsql import rawSqlToDict, Pgsql
-from infraestructure.pgsql import writeDatabase
-from infraestructure.config import Database
+from infraestructure.pgsql import rawSqlToDict
 
 
-class extractFeed(object):
-    # extractFeed reads a ads source providers db and insert them
-    # in app db
-    def __init__(self):
+# ExtractDataRepo reads ads from source providers db
+# and insert them in app db
+class ExtractDataRepo():
+    def __init__(self, db, config) -> None:
         self.log = logging.getLogger('extractData')
+        self.db = db
+        self.tableName = config.tableName
 
     def deleteUrlSpecialCharacters(self, url):
         chars = ["á", "é", "í", "ó", "ú",
@@ -147,7 +145,7 @@ class extractFeed(object):
         Return : Dictionary
         """
 
-        if (category is None):
+        if category is None:
             return
 
         filter_additional_category, \
@@ -156,7 +154,7 @@ class extractFeed(object):
         filter_uniq_category = " and category in ( " + str(category) + " ) "
 
         filter_ad_ids = ""
-        if (ad_ids_filter != ""):
+        if ad_ids_filter != "":
             filter_ad_ids = " and ad_id in ( " + ad_ids_filter + " ) "
 
         self.log.info('Extract feed from category %s' % str(category))
@@ -328,40 +326,31 @@ class extractFeed(object):
                 count(mq.mail_queue_id) desc
             ) as data
         """ % (self.generateCaseUrl(),
-                filter_uniq_category,
-                filter_additional_category,
-                filter_ad_ids,
-                current_year,
-                last_year,
-                filter_price,
-                group_by)
+               filter_uniq_category,
+               filter_additional_category,
+               filter_ad_ids,
+               current_year,
+               last_year,
+               filter_price,
+               group_by)
         self.log.info('Executing query.')
         data = rawSqlToDict(query)
         self.log.info("Extract Product Feed Successed")
         return data
 
+    def getFeedToEndpoint(self, category=None):
+        dataDict = self.extractProductFeed(category)
+        conn = self.db.getConnection()
+        self.db.copyStringIter(conn, self.tableName, dataDict)
+        self.db.closeConnection(conn)
 
-def getFeedToEndpoint(category=None):
-    ef = extractFeed()
-    dataDict = ef.extractProductFeed(category)
-    dbTable = Database()
-    dbWrite = writeDatabase()
-    dbWrite.copyStringIter(dbTable.tableName, dataDict)
-    dbWrite.closeConnection()
-
-
-def mainExtract():
-    Pgsql().truncate()
-    categoryList = [1220, 1240,
-                    2020, 2060,
-                    3060, 3040, 3020, 3080,
-                    4020, 4080,
-                    5020, 5040, 5060, 5160,
-                    6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180]
-    for category in categoryList:
-        getFeedToEndpoint(category)
-
-
-def generate():
-    t = threading.Thread(target=mainExtract)
-    t.start()
+    def mainExtract(self):
+        self.db.truncate()
+        categoryList = [1220, 1240,
+                        2020, 2060,
+                        3060, 3040, 3020, 3080,
+                        4020, 4080,
+                        5020, 5040, 5060, 5160,
+                        6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180]
+        for category in categoryList:
+            self.getFeedToEndpoint(category)

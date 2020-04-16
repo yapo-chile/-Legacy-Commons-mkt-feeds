@@ -5,20 +5,20 @@ from typing import NamedTuple
 
 def getValue(env, default=""):
     if env.endswith("FILE"):
-        val = getValueFromFile(env, default)
+        val = getValueFromFile(env)
         return val if val.strip() else environ.get(env[:-5], default)
     return environ.get(env, default)
 
 
-def getValueFromFile(env, default):
+def getValueFromFile(env):
     try:
         file = environ.get(env)
         if file is not None:
             fileData = open(file)
             return fileData.readline()
-        return default
+        return ""
     except IOError:
-        return default
+        return ""
 
 
 # Logger tuple that contain all definitions for logging usage
@@ -32,11 +32,11 @@ class Server(NamedTuple):
     Port: int = int(getValue("SERVER_PORT", "5000"))
     tmpLocation: str = getValue("SERVER_TMP_LOCATION", "tmp")
     Debug: bool = json.loads(getValue("SERVER_DEBUG", 'true'))
-    configFile: str = getValue("SERVER_CONFIG_FILE", "catalog.json")
 
 
 # Database tuple that contains all definitions for its conection
 class Database(NamedTuple):
+    driver: str = getValue("DATABASE_DRIVER", "postgres")
     host: str = getValue("DATABASE_HOST", "0.0.0.0")
     port: int = int(getValue("DATABASE_PORT", "5432"))
     dbname: str = getValue("DATABASE_NAME", "feeds-db")
@@ -44,6 +44,8 @@ class Database(NamedTuple):
     password: str = getValue("DATABASE_PASSWORD_FILE", "docker")
     tableName: str = getValue("DATABASE_TABLE_NAME", "data_feed")
     migrations: str = getValue("DATABASE_MIGRATIONS_FOLDER", "migrations")
+    maxretries: int = int(getValue("DATABASE_MAX_RETRIES", "10"))
+    retryTimeout: int = int(getValue("DATABASE_RETRY_TIMEOUT", "10"))
 
 
 class DatabaseSource(NamedTuple):
@@ -60,6 +62,7 @@ class AWS(NamedTuple):
     bucketName: str = getValue("AWS_STORAGE_BUCKET_NAME", "mkt-feeds")
     bucketFolder: str = getValue("AWS_STORAGE_BUCKET_FOLDER", "config")
     region: str = getValue("AWS_REGION_NAME", "us-east-1")
+    configFile: str = getValue("SERVER_CONFIG_FILE", "catalog.json")
 
 
 # Config type to contain all definitions of configs
