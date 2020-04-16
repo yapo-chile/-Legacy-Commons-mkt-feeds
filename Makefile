@@ -1,6 +1,13 @@
 include scripts/commands/vars.mk
 -include scripts/commands/secrets.mk
 
+export BRANCH ?= $(shell git branch | sed -n 's/^\* //p')
+export COMMIT_DATE_UTC ?= $(shell TZ=UTC git show --quiet --date='format-local:%Y%m%d_%H%M%S' --format="%cd")
+
+export DOCKER_TAG ?= $(shell echo ${BRANCH} | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
+export CHART_DIR ?= k8s/${APPNAME}
+
+
 ## Deletes all containers
 docker-remove: docker-stop
 	docker-compose rm -f
@@ -31,6 +38,13 @@ docker-publish:
 ## Publishes container in local registry
 docker-publish-local:
 	@scripts/commands/docker-local-registry.sh
+
+## Upload helm charts for deploying on k8s
+helm-publish:
+	@echo "Publishing helm package to Artifactory"
+	helm lint ${CHART_DIR}
+	helm package ${CHART_DIR}
+	jfrog rt u "*.tgz" "helm-local/yapo/" || true
 
 ## Execute the service
 remove:
@@ -82,23 +96,25 @@ auto-format:
 pylint:
 	pylint app/*.py app/**/*.py
 
-# Run lints to generate report
+## Run lints to generate report
 lints:
 	@scripts/commands/lints.sh
 
-# runs all related test to check app
+## runs all related test to check app
 tests: check-style lints
 
-# Starts gunicorn locally simulating a dockerized enviroment
+## Starts gunicorn locally simulating a dockerized enviroment
 gunicorn:
 	cd app && gunicorn -b ${SERVER_HOST}:${SERVER_PORT} --log-level=debug --enable-stdio-inheritance --preload --capture-output app:APP
 
-# shows app info
+## shows app info
 info:
-	@echo "YO           	         : ${YO}"
-	@echo "ServerRoot   	         : ${SERVER_ROOT}"
-	@echo "API Base URL 	         : ${SERVER_URL}"
-	@echo "API Healthcheck URL       : ${SERVER_URL}/healthcheck"
+	@echo "Service: ${APPNAME}"
+	@echo "Images from latest commit:"
+	@echo "- ${DOCKER_IMAGE}:${DOCKER_TAG}"
+	@echo "- ${DOCKER_IMAGE}:${COMMIT_DATE_UTC}"
+	@echo "API Base URL: ${BASE_URL}"
+	@echo "Healthcheck: curl ${BASE_URL}/healthcheck"
 	@echo "API Healthcheck NGINX URL : http://${SERVER_HOST}:${NGINX_EXPOSED_PORT}/feeds/api/v1/healthcheck"
 	@echo "DB connect                : psql -h ${SERVER_HOST} -U ${DATABASE_USER} -p "${DATABASE_PORT}" ${DATABASE_NAME}"
 	@echo "SERVER ACCESS             : docker exec -it feeds-core sh"

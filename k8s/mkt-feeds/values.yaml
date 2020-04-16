@@ -1,0 +1,52 @@
+# Default values for mkt-feeds.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+globals:
+  env: reg
+
+image:
+  repository: containers.mpi-internal.com/yapo/mkt-feeds
+  tag: "latest"
+  pullPolicy: Always
+  pullSecret: containers-mpi-internal-com
+
+env:
+  SERVER_DEBUG: true
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+healthcheck:
+  path: /healthcheck
+  readiness:
+    initialDelaySeconds: 5
+    periodSeconds: 60
+  liveness:
+    initialDelaySeconds: 5
+    periodSeconds: 3600
+
+ingress:
+  enabled: true
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: "yapo.cl"
+      paths: ['/']
+
+resources:
+  requests:
+    ephemeral-storage: "256Mi"
+  limits:
+    ephemeral-storage: "512Mi"
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

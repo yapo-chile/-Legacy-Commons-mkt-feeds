@@ -41,7 +41,7 @@ class Database(NamedTuple):
     port: int = int(getValue("DATABASE_PORT", "5432"))
     dbname: str = getValue("DATABASE_NAME", "feeds-db")
     user: str = getValue("DATABASE_USER", "docker")
-    password: str = getValue("DATABASE_PASSWORD_FILE", "docker")
+    password: str = getValue("DATABASE_PASSWORD", "docker")
     tableName: str = getValue("DATABASE_TABLE_NAME", "data_feed")
     migrations: str = getValue("DATABASE_MIGRATIONS_FOLDER", "migrations")
     maxretries: int = int(getValue("DATABASE_MAX_RETRIES", "10"))
@@ -53,7 +53,7 @@ class DatabaseSource(NamedTuple):
     port: int = int(getValue("SOURCEDATA_PORT", "5432"))
     dbname: str = getValue("SOURCEDATA_NAME", "feeds-db")
     user: str = getValue("SOURCEDATA_USER", "docker")
-    password: str = getValue("SOURCEDATA_PASSWORD_FILE")
+    password: str = getValue("SOURCEDATA_PASSWORD")
 
 
 class AWS(NamedTuple):
