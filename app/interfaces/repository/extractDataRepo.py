@@ -103,34 +103,18 @@ class ExtractDataRepo():
         out = "case"
         for c_key, c_value in categories.items():
             for r_key, r_value in region.items():
-                if c_key == 3060:
-                    out += """
-                        when (a.region = %d and a.category = %d)
-                            then 'https://www.yapo.cl/chile?q='||
-                            replace(replace(replace(replace(replace(replace(replace(
-                            lower(a.subject), 'á', 'a'), 'é', 'e'), 'í', 'i')
-                            , 'ó', 'o'), 'ú', 'u'), ' ', '+'), '|', '')
-                        """ % (r_key, c_key)
-                elif c_key == 1220 or c_key == 1240:
-                    out += """
-                        when (a.region = %d and a.category = %d)
-                            then 'https://www.yapo.cl/%s/%s/'||
-                            replace(replace(replace(replace(replace(replace(
-                            replace(replace(replace(replace(replace(replace(
-                            replace(replace(replace(replace(replace(replace(
-                            lower(a.subject),' ','_'),'á', 'a'), 'é', 'e')
-                            , 'í', 'i'), 'ó', 'o'), 'ú', 'u'),'!','_')
-                            ,'?','_'),',','_'),';','_'),':','_'),'¨','_')
-                            ,'º','_'),'ª','_'),'$','_'),'#','_'),'&','_')
-                            , '|', '')||'_'||a.list_id||'.htm'
-                    """ % (r_key, c_key, r_value, c_value)
-                else:
-                    out += """
-                        when (a.region = %d and a.category = %d)
-                            then 'https://www.yapo.cl/%s/%s/'||
-                                replace(replace(lower(a.subject),' ','_')
-                                , '|', '')||'_'||a.list_id||'.htm'
-                    """ % (r_key, c_key, r_value, c_value)
+                out += """
+                    when (a.region = %d and a.category = %d)
+                        then 'https://www.yapo.cl/%s/%s/'||
+                        replace(replace(replace(replace(replace(replace(
+                        replace(replace(replace(replace(replace(replace(
+                        replace(replace(replace(replace(replace(replace(
+                        lower(a.subject),' ','_'),'á', 'a'), 'é', 'e')
+                        , 'í', 'i'), 'ó', 'o'), 'ú', 'u'),'!','_')
+                        ,'?','_'),',','_'),';','_'),':','_'),'¨','_')
+                        ,'º','_'),'ª','_'),'$','_'),'#','_'),'&','_')
+                        , '|', '')||'_'||a.list_id||'.htm'
+                """ % (r_key, c_key, r_value, c_value)
         out += "end as url,"
         return out
 
