@@ -5,7 +5,7 @@ import domain as d
 import interfaces.handlers as h
 from infraestructure.config import Config
 from infraestructure.migrations import Migrations
-from infraestructure.pgsql import Pgsql
+from infraestructure.pgsql import Pgsql, Datasource
 from infraestructure.catalog import CatalogConf
 from usecases.catalog import CatalogUsecases
 from usecases.refresh import RefreshUsecases
@@ -31,13 +31,17 @@ if not DB.start():
 MIGRATIONS: Migrations = Migrations(CONFIG.database)
 MIGRATIONS.migrate()
 
+DATASOURCE: Datasource = Datasource(CONFIG.databaseSource)
 # Start catalog conf
 CATALOG_CONF: CatalogConf = CatalogConf(CONFIG.aws)
 
 # Initiallize
 # Repos
 CATALOG_REPO: CatalogRepo = CatalogRepo(DB, CATALOG_CONF)
-EXTRACT_DATA_REPO: ExtractDataRepo = ExtractDataRepo(DB, CONFIG.database)
+EXTRACT_DATA_REPO: ExtractDataRepo = ExtractDataRepo(
+    DB,
+    CONFIG.database,
+    DATASOURCE)
 
 # Usecases
 CATALOG: CatalogUsecases = CatalogUsecases(CATALOG_REPO, CONFIG.server, LOGGER)

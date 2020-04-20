@@ -1,7 +1,5 @@
 import domain as d
-import unicodedata
 import pandas as pd  # type: ignore
-from urllib import parse
 from typing import List
 
 
@@ -122,20 +120,6 @@ class CatalogRepo():
     def _getData(self) -> pd.DataFrame:
         return self.db.select(query=self._getQueryCatalog())
 
-    # _urlParse returns url safe string
-    def _urlParse(self, url) -> str:
-        url = " ".join(url.split())
-        url = self._strip_accents(url)
-        url = parse.quote(url, safe="/:?#[]@!$&'()*+;=")
-        return url
-
-    # _strip_accents remove accents on a str
-    def _strip_accents(self, text) -> str:
-        text = unicodedata.normalize('NFD', text)\
-            .encode('ascii', 'ignore')\
-            .decode("utf-8")
-        return str(text)
-
     # _applyFields returns a dataframe with renamed columns
     def _applyFields(self, data, catalogConfig) -> pd.DataFrame:
         if len(catalogConfig["fields"]) > 0:
@@ -192,7 +176,6 @@ class CatalogRepo():
     # getRawCatalog returns a dataframe with all the data
     def getRawCatalog(self) -> pd.DataFrame:
         data = self._getData()
-        data['url'] = data.url.apply(self._urlParse)
         return data
 
     # getCatalogConfig returns a specific catalogConfig
