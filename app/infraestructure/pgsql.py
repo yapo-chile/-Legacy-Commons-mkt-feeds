@@ -1,12 +1,15 @@
 from typing import Iterator, Dict, Any
 import logging
 import time
+import re
+import unicodedata
 import pandas as pd  # type: ignore
 import psycopg2  # type: ignore
 from contextlib import contextmanager
 from psycopg2 import pool
 from infraestructure.stringIteratorIO import StringIteratorIO,\
     cleanCsvValue, cleanStrValue
+from urllib import parse
 from infraestructure import config
 
 
@@ -27,41 +30,81 @@ def db(conf):
         conn.close()
 
 
-def rawSqlToDict(query, param=None):
-    """
-    Method for convert a raw query into a dict
-    Parameters
-    ----------
-    query:
-        Raw query to use
-    param:
-        In case from need aditional parameters can be added by here
-    Returns
-    -------
-    Dict
-        format [{u'nombre:'valor',N..}]
-    """
-    dbs = config.DatabaseSource()
-    conn = psycopg2.connect(user=dbs.user,
-                            password=dbs.password,
-                            host=dbs.host,
-                            port=dbs.port,
-                            database=dbs.dbname)
-    cursor = conn.cursor()
-    conn.set_client_encoding('UTF-8')
-    cursor.execute(query, param)
-    fieldnames = [name[0] for name in cursor.description]
-    result = []
-    for row in cursor.fetchall():
-        rowset = []
-        for field in zip(fieldnames, row):
-            rowset.append(field)
-        result.append(dict(rowset))
-    # Closes connection
-    cursor.close()
-    conn.close()
-    # Return results
-    return result
+class Datasource:
+    def __init__(self, dbconfig):
+        self.config = dbconfig
+
+    def rawSqlToDict(self, query, params):
+        """
+        Method for convert a raw query into a dict
+        Parameters
+        ----------
+        query:
+            Raw query to use
+        param:
+            In case from need aditional parameters can be added by here
+        Returns
+        -------
+        Dict
+            format [{u'nombre:'valor',N..}]
+        """
+        conn = psycopg2.connect(user=self.config.user,
+                                password=self.config.password,
+                                host=self.config.host,
+                                port=self.config.port,
+                                database=self.config.dbname)
+        cursor = conn.cursor()
+        conn.set_client_encoding('UTF-8')
+        cursor.execute(query)
+        fieldnames = [name[0] for name in cursor.description]
+        result = []
+        for row in cursor.fetchall():
+            rowset = []
+            for field in zip(fieldnames, row):
+                if len(field) == 2 and field[0] in params:
+                    value = self._normalizeFields(field[0], field[1])
+                    field = (field[0], value)
+                rowset.append(field)
+            result.append(dict(rowset))
+        # Closes connection
+        cursor.close()
+        conn.close()
+        # Return results
+        return result
+
+    # _normalizeFields returns a normalized str
+    def _normalizeFields(self, field, value) -> str:
+        rep = {'|': '', '\r': ' ', '\n': '--'}
+        if 'url' in field:
+            rep.update({'&#8230;': '_',
+                        ';': '_', '!': '_', '?': '_',
+                        ':': '_', '¨': '_', 'º': '_',
+                        'ª': '_', '$': '_', '#': '_',
+                        '&': '_', '"': '_', '%': '_',
+                        ',': '_'})
+            return self._urlParse(self._replaceCharacters(rep, value))
+        return self._replaceCharacters(rep, value)
+
+    def _replaceCharacters(self, rep, value) -> str:
+        # do the replacement
+        rep = dict((re.escape(k), v) for k, v in rep.items())
+        pattern = re.compile("|".join(rep.keys()))
+        return pattern.sub(
+            lambda m: rep[re.escape(m.group(0))],
+            self._strip_accents(value)
+        )
+
+    # _urlParse returns url safe string
+    def _urlParse(self, url) -> str:
+        url = "_".join(url.split())
+        return "https://" + url if not url.startswith('https://') else url
+
+    # _strip_accents remove accents on a str
+    def _strip_accents(self, text) -> str:
+        text = unicodedata.normalize('NFD', text)\
+            .encode('ascii', 'ignore')\
+            .decode("utf-8")
+        return str(text)
 
 
 class Pgsql:
