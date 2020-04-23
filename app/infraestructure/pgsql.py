@@ -13,6 +13,18 @@ from urllib import parse
 from infraestructure import config
 
 
+URLREPLACEMENTS = dict((re.escape(k), v) for k, v in(
+        {'|': '', '\r': ' ', '\n': '--',
+         '&#8230;': '_', ';': '_', '!': '_', '?': '_',
+         ':': '_', '¨': '_', 'º': '_', 'ª': '_', '$': '_',
+         '#': '_', '&': '_', '"': '_', '%': '_', ',': '_'}.items()))
+WORDREPLACEMENTS = dict((re.escape(k), v) for k, v in(
+    {'|': '', '\r': ' ', '\n': '--'}.items()))
+
+URLPATTERN = re.compile("|".join(URLREPLACEMENTS.keys()))
+WORDPATTERN = re.compile("|".join(WORDREPLACEMENTS.keys()))
+
+
 @contextmanager
 def db(conf):
     conn = psycopg2.connect(
@@ -74,21 +86,13 @@ class Datasource:
 
     # _normalizeFields returns a normalized str
     def _normalizeFields(self, field, value) -> str:
-        rep = {'|': '', '\r': ' ', '\n': '--'}
         if 'url' in field:
-            rep.update({'&#8230;': '_',
-                        ';': '_', '!': '_', '?': '_',
-                        ':': '_', '¨': '_', 'º': '_',
-                        'ª': '_', '$': '_', '#': '_',
-                        '&': '_', '"': '_', '%': '_',
-                        ',': '_'})
-            return self._urlParse(self._replaceCharacters(rep, value))
-        return self._replaceCharacters(rep, value)
+            return self._urlParse(self._replaceCharacters(
+                URLPATTERN, URLREPLACEMENTS, value))
+        return self._replaceCharacters(WORDPATTERN, WORDREPLACEMENTS, value)
 
-    def _replaceCharacters(self, rep, value) -> str:
+    def _replaceCharacters(self, pattern, rep, value) -> str:
         # do the replacement
-        rep = dict((re.escape(k), v) for k, v in rep.items())
-        pattern = re.compile("|".join(rep.keys()))
         return pattern.sub(
             lambda m: rep[re.escape(m.group(0))],
             self._strip_accents(value)
