@@ -24,30 +24,12 @@ class ExtractDataRepo():
         filter_price = ""
         group_by = " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 "
         # Filter by category
-        if (category == 2020 or category == 2060):
+        if (category == 2020 or category == 2040 or category == 2060):
             filter_additional_category = """ and user_id not in (3068060,
                                                 4980658,688562,3263523,
                                                 4317756,3762781) """
         # Filters for price
-        if (category == 1220 or category == 1240):
-            filter_price = " and a.price is not null and a.price > 0 "
-
-        if (category == 2020 or category == 2060):
-            filter_price = " and a.price is not null and a.price >= 1000000 "
-
-        if (category == 3020 or category == 3040
-                or category == 3060 or category == 3080):
-            filter_price = " and a.price is not null and a.price > 1000 "
-
-        if (category == 4020 or category == 4080 or category == 5020
-                or category == 5040 or category == 5060 or category == 5160
-                or category == 6060 or category == 6080 or category == 6100
-                or category == 6120 or category == 6160 or category == 6180):
-            filter_price = " and a.price is not null and a.price > 2000 "
-
-        # Add price group by
-        if (category == 1220 or category == 1240):
-            group_by = group_by + ", a.price "
+        filter_price = " and a.price is not null and a.price > 0 "
 
         return filter_additional_category, filter_price, group_by
 
@@ -55,10 +37,16 @@ class ExtractDataRepo():
         categories = {
             1220: 'comprar',
             1240: 'arrendar',
+            1260: 'arriendo_temporada',
             2020: 'autos',
+            2040: 'camiones_furgones',
+            2060: 'motos',
+            2080: 'barcos_lanchas_aviones',
+            2100: 'accesorios_vehiculos',
+            2120: 'otros_vehiculos',
+            3020: 'consolas_videojuegos',
             3040: 'computadores',
             3060: 'celulares',
-            3020: 'consolas_videojuegos',
             3080: 'television_camaras',
             4020: 'moda-vestuario',
             4040: 'bolsos-bisuteria-accesorios',
@@ -66,9 +54,8 @@ class ExtractDataRepo():
             4080: 'calzado',
             5020: 'muebles',
             5040: 'electrodomesticos',
-            9020: 'vestuario-futura-mama-ninos',
-            9040: 'juguetes',
-            9060: 'coches-articulos-infantiles',
+            5060: 'jardin_herramientas',
+            5160: 'articulos-del-hogar',
             6020: 'deportes_gimnasia',
             6060: 'bicicletas_ciclismo',
             6080: 'instrumentos_musicales',
@@ -77,9 +64,14 @@ class ExtractDataRepo():
             6140: 'animales_accesorios',
             6160: 'arte_antiguedades_colecciones',
             6180: 'hobbies_outdoor',
-            2060: 'motos',
-            5060: 'jardin_herramientas',
-            5160: 'articulos-del-hogar'
+            7020: 'ofertas_de_empleo',
+            7040: 'busco_empleo',
+            7060: 'servicios',
+            7080: 'negocios_maquinaria_construccion',
+            8020: 'otros_productos',
+            9020: 'vestuario-futura-mama-ninos',
+            9040: 'juguetes',
+            9060: 'coches-articulos-infantiles',
         }
 
         region = {
@@ -167,6 +159,10 @@ class ExtractDataRepo():
                     then 'Hogar'
                 when a.category-mod(a.category,1000) = 6000
                     then 'Tiempo Libre'
+                when a.category-mod(a.category,1000) = 7000
+                    then 'Servicios, negocios y empleo'
+                when a.category-mod(a.category,1000) = 8000
+                    then 'Otros'
                 when a.category-mod(a.category,1000) = 9000
                     then 'Futura mamá, bebés y niños'
             end as main_category,
@@ -175,10 +171,20 @@ class ExtractDataRepo():
                     then 'Comprar'
                 when a.category = 1240
                     then 'Arrendar'
+                when a.category = 1260
+                    then 'Arriendo de temporada'
                 when a.category = 2020
                     then 'Autos, camionetas y 4x4'
+                when a.category = 2040
+                    then 'Buses, camiones y furgones'
                 when a.category = 2060
                     then 'Motos'
+                when a.category = 2080
+                    then 'Barcos, lanchas y aviones'
+                when a.category = 2100
+                    then 'Accesorios y piezas para vehículos'
+                when a.category = 2120
+                    then 'Otros vehículos'
                 when a.category = 3020
                     then 'Consolas, videojuegos y accesorios'
                 when a.category = 3040
@@ -219,6 +225,16 @@ class ExtractDataRepo():
                     then 'Arte, antigüedades y colecciones'
                 when a.category = 6180
                     then 'Hobbies y outdoor'
+                when a.category = 7020
+                    then 'Ofertas de empleo'
+                when a.category = 7040
+                    then 'Busco empleo'
+                when a.category = 7060
+                    then 'Servicios'
+                when a.category = 7080
+                    then 'Negocios, maquinaria y construcción'
+                when a.category = 8020
+                    then 'Otros productos'
                 when a.category = 9020
                     then 'Vestuario futura mamá y niños'
                 when a.category = 9040
@@ -316,11 +332,14 @@ class ExtractDataRepo():
 
     def mainExtract(self):
         self.db.truncate()
-        categoryList = [1220, 1240,
-                        2020, 2060,
-                        3060, 3040, 3020, 3080,
-                        4020, 4080,
+        categoryList = [1220, 1240, 1260,
+                        2020, 2040, 2060, 2080, 2100, 2120,
+                        3020, 3040, 3060, 3080,
+                        4020, 4040, 4060, 4080,
                         5020, 5040, 5060, 5160,
-                        6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180]
+                        6020, 6060, 6080, 6100, 6120, 6140, 6160, 6180,
+                        7020, 7040, 7060, 7080,
+                        8020,
+                        9020, 9040, 9060]
         for category in categoryList:
             self.getFeedToEndpoint(category)
