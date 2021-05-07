@@ -1,0 +1,1 @@
+ALTER TABLE data_feed DROP COLUMN IF EXISTS currency;
