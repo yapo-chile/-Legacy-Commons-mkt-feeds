@@ -8,14 +8,15 @@ from pathlib import Path
 # CatalogUsecases receives a catalog id and if valid returns a size-fixed
 # data matrix.
 class CatalogUsecases():
-    def __init__(self, catalogRepo, config, logger):
+    def __init__(self, catalogRepo, currencyRepo,config, logger):
         self.catalogRepo = catalogRepo
         self.logger = logger
         self.location = config.tmpLocation
+        self.currencyRepo = currencyRepo
 
     # generate gets catalog data and generates a new file using catalogId
     def generate(self, catalogId) -> bool:
-        catalogRaw = self.catalogRepo.getRawCatalog()
+        catalogRaw = self.currencyRepo.getRawCatalogWithFixedPrice(self.catalogRepo.getRawCatalog())
         catalogConfig = self.catalogRepo.getCatalogConfig(catalogId)
         return self.generateFromCatalog(catalogRaw, catalogConfig, catalogId)
 
@@ -59,7 +60,7 @@ class CatalogUsecases():
     # Returns true when process is done
     def generateAll(self):
         catalogAllConfig = self.catalogRepo.getAllCatalogConfig()
-        catalogRaw = self.catalogRepo.getRawCatalog()
+        catalogRaw = self.currencyRepo.getRawCatalogWithFixedPrice(self.catalogRepo.getRawCatalog())
         for key, catalogConfig in catalogAllConfig.items():
             self.generateFromCatalog(catalogRaw, catalogConfig, key)
         del catalogRaw

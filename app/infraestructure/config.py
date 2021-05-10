@@ -64,6 +64,13 @@ class AWS(NamedTuple):
     region: str = getValue("AWS_REGION_NAME", "us-east-1")
     configFile: str = getValue("SERVER_CONFIG_FILE", "catalog.json")
 
+class UFConf(NamedTuple):
+    externalApi: str = getValue("UF_EXTERNAL_API", "https://mindicador.cl/api/uf/")
+    defaultValue: int = int(getValue("UF_DEFAULT_VALUE", "29517"))
+    normalizeFactor: float = float(getValue("UF_DEFAULT_FACTOR", "0.01"))
+    roundFactor: int = int(getValue("UF_ROUND_FACTOR", "6"))
+    locationFolder: str = getValue("UF_LOCATION", "tmp")
+    latestFile: str = getValue("UF_latest_file", "latest.txt")
 
 # Config type to contain all definitions of configs
 class Config(NamedTuple):
@@ -72,3 +79,4 @@ class Config(NamedTuple):
     database: Database = Database()
     databaseSource: DatabaseSource = DatabaseSource()
     aws: AWS = AWS()
+    ufConf: UFConf = UFConf()

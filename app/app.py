@@ -11,6 +11,7 @@ from usecases.catalog import CatalogUsecases
 from usecases.refresh import RefreshUsecases
 from interfaces.repository.catalogRepo import CatalogRepo
 from interfaces.repository.extractDataRepo import ExtractDataRepo
+from interfaces.repository.currencyRepo import CurrencyRepo
 
 
 APP = Flask(__name__)
@@ -42,9 +43,9 @@ EXTRACT_DATA_REPO: ExtractDataRepo = ExtractDataRepo(
     DB,
     CONFIG.database,
     DATASOURCE)
-
+CURRENCY_REPO: CurrencyRepo = CurrencyRepo(CONFIG.ufConf)
 # Usecases
-CATALOG: CatalogUsecases = CatalogUsecases(CATALOG_REPO, CONFIG.server, LOGGER)
+CATALOG: CatalogUsecases = CatalogUsecases(CATALOG_REPO, CURRENCY_REPO, CONFIG.server, LOGGER)
 REFRESH: RefreshUsecases = RefreshUsecases(EXTRACT_DATA_REPO)
 
 # Handlers
