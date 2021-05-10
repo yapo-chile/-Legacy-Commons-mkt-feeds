@@ -22,7 +22,6 @@ class ExtractDataRepo():
     def filterCategory(self, category=None):
         filter_additional_category = ""
         filter_price = ""
-        group_by = " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19 "
         # Filter by category
         if (category == 2020 or category == 2040 or category == 2060):
             filter_additional_category = """ and user_id not in (3068060,
@@ -31,7 +30,7 @@ class ExtractDataRepo():
         # Filters for price
         filter_price = " and a.price is not null and a.price > 0 "
 
-        return filter_additional_category, filter_price, group_by
+        return filter_additional_category, filter_price
 
     def generateCaseUrl(self):
         categories = {
@@ -118,10 +117,8 @@ class ExtractDataRepo():
             return
 
         filter_additional_category, \
-            filter_price, group_by = self.filterCategory(category)
-
+            filter_price = self.filterCategory(category)
         filter_uniq_category = " and category in ( " + str(category) + " ) "
-
         filter_ad_ids = ""
         if ad_ids_filter != "":
             filter_ad_ids = " and ad_id in ( " + ad_ids_filter + " ) "
@@ -310,7 +307,7 @@ class ExtractDataRepo():
             where
                 am.ad_media_id is not null
                 %s
-            %s
+            group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19
             order by
                 count(mq.mail_queue_id) desc
             ) as data
@@ -320,8 +317,7 @@ class ExtractDataRepo():
                filter_ad_ids,
                current_year,
                last_year,
-               filter_price,
-               group_by)
+               filter_price)
         self.log.info('Executing query.')
         params = ["name", "url", "description"]
         data = self.datasource.rawSqlToDict(query, params)
