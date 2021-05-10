@@ -300,7 +300,8 @@ class ExtractDataRepo():
             left join
                 ad_params ap on a.ad_id = ap.ad_id and ap."name" = 'condition'
             left join
-                ad_params cur on a.ad_id = cur.ad_id and cur."name" = 'currency'
+                ad_params cur on a.ad_id = cur.ad_id and
+                cur."name" = 'currency'
             left join
                 (select * from blocket_%s.mail_queue
                 union all
