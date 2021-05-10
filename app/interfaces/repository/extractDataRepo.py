@@ -22,7 +22,7 @@ class ExtractDataRepo():
     def filterCategory(self, category=None):
         filter_additional_category = ""
         filter_price = ""
-        group_by = " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 "
+        group_by = " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19 "
         # Filter by category
         if (category == 2020 or category == 2040 or category == 2060):
             filter_additional_category = """ and user_id not in (3068060,
@@ -275,7 +275,8 @@ class ExtractDataRepo():
             '-' as android_url,
             'cl.yapo' as android_package,
             '-' as android_app_name,
-            count(mq.mail_queue_id)::text as num_ad_replies
+            count(mq.mail_queue_id)::text as num_ad_replies,
+            cur.value as "currency"
             from (--a
                 select
                     ad_id,
@@ -298,6 +299,8 @@ class ExtractDataRepo():
                 ad_media am on a.ad_id = am.ad_id and am.seq_no = 0
             left join
                 ad_params ap on a.ad_id = ap.ad_id and ap."name" = 'condition'
+            left join
+                ad_params cur on a.ad_id = cur.ad_id and cur."name" = 'currency'
             left join
                 (select * from blocket_%s.mail_queue
                 union all
