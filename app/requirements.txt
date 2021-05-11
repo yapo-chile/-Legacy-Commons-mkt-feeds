@@ -78,3 +78,4 @@ zict==1.0.0
 mypy==0.740
 psycopg2-binary==2.8.4
 yoyo-migrations==7.0.2
+requests==2.25.1
