@@ -22,7 +22,6 @@ class ExtractDataRepo():
     def filterCategory(self, category=None):
         filter_additional_category = ""
         filter_price = ""
-        group_by = " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 "
         # Filter by category
         if (category == 2020 or category == 2040 or category == 2060):
             filter_additional_category = """ and user_id not in (3068060,
@@ -31,7 +30,7 @@ class ExtractDataRepo():
         # Filters for price
         filter_price = " and a.price is not null and a.price > 0 "
 
-        return filter_additional_category, filter_price, group_by
+        return filter_additional_category, filter_price
 
     def generateCaseUrl(self):
         categories = {
@@ -118,10 +117,8 @@ class ExtractDataRepo():
             return
 
         filter_additional_category, \
-            filter_price, group_by = self.filterCategory(category)
-
+            filter_price = self.filterCategory(category)
         filter_uniq_category = " and category in ( " + str(category) + " ) "
-
         filter_ad_ids = ""
         if ad_ids_filter != "":
             filter_ad_ids = " and ad_id in ( " + ad_ids_filter + " ) "
@@ -275,7 +272,8 @@ class ExtractDataRepo():
             '-' as android_url,
             'cl.yapo' as android_package,
             '-' as android_app_name,
-            count(mq.mail_queue_id)::text as num_ad_replies
+            count(mq.mail_queue_id)::text as num_ad_replies,
+            cur.value as "currency"
             from (--a
                 select
                     ad_id,
@@ -299,6 +297,9 @@ class ExtractDataRepo():
             left join
                 ad_params ap on a.ad_id = ap.ad_id and ap."name" = 'condition'
             left join
+                ad_params cur on a.ad_id = cur.ad_id and
+                cur."name" = 'currency'
+            left join
                 (select * from blocket_%s.mail_queue
                 union all
                 select * from blocket_%s.mail_queue) mq on
@@ -306,7 +307,7 @@ class ExtractDataRepo():
             where
                 am.ad_media_id is not null
                 %s
-            %s
+            group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19
             order by
                 count(mq.mail_queue_id) desc
             ) as data
@@ -316,8 +317,7 @@ class ExtractDataRepo():
                filter_ad_ids,
                current_year,
                last_year,
-               filter_price,
-               group_by)
+               filter_price)
         self.log.info('Executing query.')
         params = ["name", "url", "description"]
         data = self.datasource.rawSqlToDict(query, params)

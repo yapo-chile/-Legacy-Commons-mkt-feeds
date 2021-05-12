@@ -1,0 +1,1 @@
+ALTER TABLE data_feed ADD COLUMN IF NOT EXISTS currency text;

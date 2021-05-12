@@ -104,7 +104,8 @@ class CatalogRepo():
             android_url,
             android_package,
             android_app_name,
-            num_ad_replies::int
+            num_ad_replies::int,
+            currency
             from data_feed;"""
         return query
 

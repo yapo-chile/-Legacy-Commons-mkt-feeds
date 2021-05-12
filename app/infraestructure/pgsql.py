@@ -218,6 +218,7 @@ class Pgsql:
                     rowDict['android_package'],
                     rowDict['android_app_name'],
                     rowDict['num_ad_replies'],
+                    rowDict['currency'],
                 ))) + '\n'
                 for rowDict in dataDict
                 if len(cleanStrValue(rowDict['url'])) == len(rowDict['url'])

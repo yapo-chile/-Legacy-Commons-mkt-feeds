@@ -21,18 +21,15 @@ else
     echoError "Platform not supported"
 fi
 
-if [ -n "${BUILD_BRANCH}" ]; then
-    export GIT_BRANCH=${BUILD_BRANCH}
-fi
 
 echoTitle "Building docker image for ${DOCKER_IMAGE}-proxy"
-echo "GIT BRANCH: ${GIT_BRANCH}"
-echo "GIT COMMIT: ${GIT_COMMIT}"
+echo "GIT BRANCH: ${BRANCH}"
+echo "GIT COMMIT: ${GIT_COMMIT}"2
 echo "GIT COMMIT SHORT: ${GIT_COMMIT_SHORT}"
 echo "BUILD CREATOR: ${BUILD_CREATOR}"
-echo "BUILD NAME: ${DOCKER_IMAGE}:${BRANCH}"
+echo "BUILD NAME: ${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-DOCKER_ARGS=" -t ${DOCKER_IMAGE}-proxy:${BRANCH} \
+DOCKER_ARGS=" -t ${DOCKER_IMAGE}-proxy:${DOCKER_TAG} \
     -f nginx/dockerfile \
     ."
 
