@@ -18,9 +18,6 @@ stages:
   - update-chart
   - deploy
 
-install:
-  extends: .install
-
 docker:
   extends: .docker-push-release
   only:
