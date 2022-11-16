@@ -1,43 +1,12 @@
+include:
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/docker-pipeline-template'
+    ref: main
+    file: 'gitlab-ci.yaml'
+
 stages:
-  - dependencies
-  - test
-  - build
+  - build-docker
 
-dependencies:
-  image: python:3.8.3-alpine
-  stage: dependencies
-  script:
-    - ls
-  artifacts:  
-    paths:
-      - /usr/local/lib/
-
-lint:
-  image: python:3.8.3-alpine
-  stage: test
-  script:
-    - echo TODO
-  cache:
-    paths:
-      - node_modules
-    policy: pull
-
-test:
-  image: python:3.8.3-alpine
-  stage: test
-  script:
-    - make tests
-  allow_failure: true
-  artifacts:  
-    paths:
-      - /usr/local/lib/
-
-build:
-  image: python:3.8.3-alpine
-  stage: build
-  script:
-    - make build
-  artifacts:
-    paths:
-      - $CI_PROJECT_DIR/dist
-
+docker-push-hash:
+  extends: .docker-push-release
+  only:
+    - main
