@@ -96,7 +96,7 @@ class ExtractDataRepo():
             for r_key, r_value in region.items():
                 out += """
                     when (a.region = %d and a.category = %d)
-                        then 'www.yapo.cl/%s/%s/'||
+                        then 'new.yapo.cl/%s/%s/'||
                         a.subject||'_'||a.list_id||'.htm'
                 """ % (r_key, c_key, r_value, c_value)
         out += "end as url,"
