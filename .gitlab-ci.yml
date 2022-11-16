@@ -2,29 +2,32 @@ variables:
   GIT_DEPTH: 2
 
 include:
-  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/python-pipeline-template'
-    ref: dummy-pipeline
+  # - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/golang-pipeline-template'
+  #   ref: v1
+  #   file: 'gitlab-ci.yml'
+  - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/docker-pipeline-template'
+    ref: v1
     file: 'gitlab-ci.yml'
-  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/docker-pipeline-template'
-    ref: dummy-pipeline
+  - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/helm-pipeline-template'
+    ref: master
+    file: 'gitlab-ci.yml' 
+  - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/repo-version-tagger'
+    ref: v1
     file: 'gitlab-ci.yml'
-  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/yaml-updater'
-    ref: dummy-pipeline
-    file: 'gitlab-ci.yml'
-  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/repo-version-tagger'
-    ref: main
-    file: 'gitlab-ci.yml'
-  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/changelog-validator'
-    ref: main
+  - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/changelog-validator'
+    ref: v1
     file: 'gitlab-ci.yml'
 
 stages:
-  - test-env
-  - install
-  - test
+  # - install
+  # - test
+  # - build-artifact
   - build-docker
   - container-scan
   - retag-docker
+  - package
   - update-chart
+  - deploy
   - version-tag
   - changelog-validate
+
