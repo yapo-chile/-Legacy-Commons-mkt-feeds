@@ -12,15 +12,7 @@ include:
     ref: main
     file: 'gitlab-ci.yml'
 
-.install:
-  image: python:3.8-alpine
-  stage: install
-  script:
-    - pip install -r app/requirements.txt
-  allow_failure: false
-
 stages:
-  - install
   - build-docker
   - helm
   - update-chart
