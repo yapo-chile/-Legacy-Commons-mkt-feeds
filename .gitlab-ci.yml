@@ -13,7 +13,7 @@ include:
     file: 'gitlab-ci.yml'
 
 .install:
-  image: python:3.7.3-alpine
+  image: python:3.8-alpine
   stage: install
   script:
     - pip install -r app/requirements.txt
