@@ -1,58 +1,30 @@
----
 variables:
-  GO_PROJECT: gitlab.com/yapo_team/legacy/commons/mkt-feeds
-  CHART_DIR: k8s/$CI_PROJECT_NAME
-  CI_JOB_TIMESTAMP: date-tag
+  GIT_DEPTH: 2
 
 include:
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/python-pipeline-template'
+    ref: dummy-pipeline
+    file: 'gitlab-ci.yml'
   - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/docker-pipeline-template'
+    ref: dummy-pipeline
+    file: 'gitlab-ci.yml'
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/yaml-updater'
+    ref: dummy-pipeline
+    file: 'gitlab-ci.yml'
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/repo-version-tagger'
     ref: main
     file: 'gitlab-ci.yml'
-  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/helm-pipeline-template'
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/changelog-validator'
     ref: main
     file: 'gitlab-ci.yml'
 
 stages:
+  - test-env
+  - install
+  - test
   - build-docker
-  - helm
+  - container-scan
+  - retag-docker
   - update-chart
-  - deploy
-
-docker:
-  extends: .docker-push-release
-  only:
-    - dev
-    - pre
-    - main
-
-helm:
-  extends: .helm
-  only:
-    - dev
-    - pre
-    - main
-
-update-chart-dev:
-  extends: .update-chart-dev
-  only:
-    - dev
-
-update-chart-pre:
-  extends: .update-chart-pre
-  only:
-    - pre
-
-update-chart-pro:
-  extends: .update-chart-prod
-  only:
-    - main
-
-deploy-k8s-pre:
-  extends: .deploy-k8s-pre
-  only:
-    - pre
-
-deploy-k8s-pro:
-  extends: .deploy-k8s-prod
-  only:
-    - main
+  - version-tag
+  - changelog-validate
