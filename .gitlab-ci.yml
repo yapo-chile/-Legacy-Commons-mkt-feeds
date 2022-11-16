@@ -1,5 +1,6 @@
 variables:
   GIT_DEPTH: 2
+  CHART_DIR: k8s/$CI_PROJECT_NAME
 
 include:
   # - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/golang-pipeline-template'
