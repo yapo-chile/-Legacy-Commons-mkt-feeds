@@ -1,12 +1,69 @@
+---
+variables:
+  GO_PROJECT: gitlab.com/yapo_team/legacy/commons/mkt-feeds
+  CHART_DIR: k8s/$CI_PROJECT_NAME
+  CI_JOB_TIMESTAMP: date-tag
+
 include:
   - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/docker-pipeline-template'
     ref: main
-    file: 'gitlab-ci.yaml'
+    file: 'gitlab-ci.yml'
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/helm-pipeline-template'
+    ref: main
+    file: 'gitlab-ci.yml'
+
+.install:
+  image: python:3.7.3-alpine
+  stage: install
+  script:
+    - pip install -r app/requirements.txt
+  allow_failure: false
 
 stages:
+  - install
   - build-docker
+  - helm
+  - update-chart
+  - deploy
 
-docker-push-hash:
+install:
+  extends: .install
+
+docker:
   extends: .docker-push-release
+  only:
+    - dev
+    - pre
+    - main
+
+helm:
+  extends: .helm
+  only:
+    - dev
+    - pre
+    - main
+
+update-chart-dev:
+  extends: .update-chart-dev
+  only:
+    - dev
+
+update-chart-pre:
+  extends: .update-chart-pre
+  only:
+    - pre
+
+update-chart-pro:
+  extends: .update-chart-prod
+  only:
+    - main
+
+deploy-k8s-pre:
+  extends: .deploy-k8s-pre
+  only:
+    - pre
+
+deploy-k8s-pro:
+  extends: .deploy-k8s-prod
   only:
     - main
