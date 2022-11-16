@@ -7,6 +7,7 @@ dependencies:
   image: python:3.8.3-alpine
   stage: dependencies
   script:
+    - pip install make
     - make install
   artifacts:  
     paths:
