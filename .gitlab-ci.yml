@@ -3,9 +3,6 @@ variables:
   CHART_DIR: k8s/$CI_PROJECT_NAME
 
 include:
-  # - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/golang-pipeline-template'
-  #   ref: v1
-  #   file: 'gitlab-ci.yml'
   - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/docker-pipeline-template'
     ref: v1
     file: 'gitlab-ci.yml'
@@ -20,9 +17,6 @@ include:
     file: 'gitlab-ci.yml'
 
 stages:
-  # - install
-  # - test
-  # - build-artifact
   - build-docker
   - container-scan
   - retag-docker
