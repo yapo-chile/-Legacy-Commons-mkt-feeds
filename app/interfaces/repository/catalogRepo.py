@@ -119,7 +119,8 @@ class CatalogRepo():
 
     # _getData returns a dataframe using a given sql query
     def _getData(self) -> pd.DataFrame:
-        return self.db.select(query=self._getQueryCatalog())
+        data = self.db.select(query=self._getQueryCatalog())
+        return data
 
     # _applyFields returns a dataframe with renamed columns
     def _applyFields(self, data, catalogConfig) -> pd.DataFrame:
