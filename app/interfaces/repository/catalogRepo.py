@@ -130,10 +130,11 @@ class CatalogRepo():
 
     # _applyCreateColumn returns a dataframe with new columns
     def _applyCreateColumn(self, data, catalogConfig) -> pd.DataFrame:
+        data = data.copy()
         if "create_column" in catalogConfig:
             for k, v in catalogConfig["create_column"].items():
                 if v in data.columns:
-                    data[k] = data.eval(v)
+                    data[k] = data[v]
                 else:
                     data[k] = v
         return data
