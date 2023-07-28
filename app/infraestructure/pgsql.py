@@ -104,11 +104,23 @@ class Datasource:
         return "https://" + url if not url.startswith('https://') else url
 
     # _strip_accents remove accents on a str
+    """def _strip_accents(self, text) -> str:
+        print("strip_accents")
+        print(text)
+        text = unicodedata.normalize('NFD', text)\
+            .encode('ascii', 'ignore')\
+            .decode("utf-8")
+        return str(text)"""
+        
+    
     def _strip_accents(self, text) -> str:
+        if text is None:
+            return ""
         text = unicodedata.normalize('NFD', text)\
             .encode('ascii', 'ignore')\
             .decode("utf-8")
         return str(text)
+
 
 
 class Pgsql:
@@ -152,7 +164,8 @@ class Pgsql:
             self.log.error('Connection pool error: %s', error)
         except psycopg2.OperationalError as error:
             self.log.error('Operational connection error: %s', error)
-
+    
+    """
     def select(self, query: str) -> pd.DataFrame:
         with db(self.dbconf) as (conn, cursor):
             cursor.execute(query)
@@ -160,6 +173,20 @@ class Pgsql:
             data = pd.DataFrame(cursor.fetchall())
             data.columns = [name[0] for name in cursor.description]
             return data
+    """
+        
+    def select(self, query: str) -> pd.DataFrame:
+        with db(self.dbconf) as (conn, cursor):
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            if rows:
+                columns = [desc[0] for desc in cursor.description]
+                data = pd.DataFrame(rows, columns=columns)
+            else:
+                data = pd.DataFrame()
+
+        return data
 
     def truncate(self) -> pd.DataFrame:
         with db(self.dbconf) as (conn, cursor):
