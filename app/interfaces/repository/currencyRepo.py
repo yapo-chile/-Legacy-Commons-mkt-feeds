@@ -10,12 +10,21 @@ class CurrencyRepo():
 
     # getRawCatalogWithFixedPrice returns a dataframe
     # with price on chilean pesos
-    def getRawCatalogWithFixedPrice(self, data) -> pd.DataFrame:
+    """def getRawCatalogWithFixedPrice(self, data) -> pd.DataFrame:
         uf = self.getCurrentUF()
         data['price'] = data.apply(
             lambda x: self._getUFPrice(x.price, x.currency, uf), axis=1
         )
+        return data"""
+    
+    def getRawCatalogWithFixedPrice(self, data) -> pd.DataFrame:
+        uf = self.getCurrentUF()
+        if 'price' in data:
+            data['price'] = data.apply(
+                lambda x: self._getUFPrice(x.price, x.currency, uf), axis=1
+            )
         return data
+
 
     # getCurrentUF returns updated uf from external api.
     # If it fails, gets latest or default value

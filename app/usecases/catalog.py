@@ -3,6 +3,7 @@ import pandas as pd  # type: ignore
 import threading
 import datetime
 from pathlib import Path
+import os
 
 
 # CatalogUsecases receives a catalog id and if valid returns a size-fixed
@@ -61,13 +62,18 @@ class CatalogUsecases():
     # and iterate over them to re-create all files.
     # Returns true when process is done
     def generateAll(self):
+        print("Generating all catalogs")
         catalogAllConfig = self.catalogRepo.getAllCatalogConfig()
         catalogRaw = self.currencyRepo.getRawCatalogWithFixedPrice(
             self.catalogRepo.getRawCatalog()
         )
+        
         for key, catalogConfig in catalogAllConfig.items():
+            print("Key", key)
+            print("catalogConfig ", catalogConfig)
             self.generateFromCatalog(catalogRaw, catalogConfig, key)
         del catalogRaw
+        
         return True
 
     # createCsv trigger process to create a file using catalogId
@@ -109,9 +115,14 @@ class CatalogUsecases():
         return catalogId
 
     # filepath returns a file path using a catalogId
-    def filepath(self, catalogId):  # type: ignore
+    """def filepath(self, catalogId):  # type: ignore
         return "{}/{}".format(self.location,
-                              self.filename(catalogId))
+                              self.filename(catalogId))"""
+    
+    def filepath(self, catalogId):
+        directory = "tmp"
+        os.makedirs(directory, exist_ok=True)
+        return "{}/{}".format(directory, self.filename(catalogId))
 
     # filename returns a file name using a catalogId
     def filename(self, catalogId, include_time=False):  # type: ignore

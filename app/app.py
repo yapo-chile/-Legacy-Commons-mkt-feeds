@@ -13,7 +13,6 @@ from interfaces.repository.catalogRepo import CatalogRepo
 from interfaces.repository.extractDataRepo import ExtractDataRepo
 from interfaces.repository.currencyRepo import CurrencyRepo
 
-
 APP = Flask(__name__)
 CONFIG: Config = Config()
 

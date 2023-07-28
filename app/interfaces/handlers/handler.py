@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import domain as d
-import datetime
 from http import HTTPStatus
-from flask import make_response, jsonify, send_file
+from flask import make_response, send_file
 
 
 # Response builds a flask response object depending of its requested type
@@ -27,9 +26,7 @@ class Response():
     def toCsv(self, file, filename):
         response = send_file(file,
                              mimetype='text/csv',
-                             attachment_filename=filename,
-                             as_attachment=True,
-                             cache_timeout=-1)
+                             as_attachment=True)
         return response
 
     # status getter
