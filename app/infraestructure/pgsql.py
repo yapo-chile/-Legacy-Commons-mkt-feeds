@@ -85,11 +85,21 @@ class Datasource:
         return result
 
     # _normalizeFields returns a normalized str
+    """def _normalizeFields(self, field, value) -> str:
+        if 'url' in field:
+            return self._urlParse(self._replaceCharacters(
+                URLPATTERN, URLREPLACEMENTS, value))
+        return self._replaceCharacters(WORDPATTERN, WORDREPLACEMENTS, value)"""
+        
+    
     def _normalizeFields(self, field, value) -> str:
+        if value is None:
+            return ""
         if 'url' in field:
             return self._urlParse(self._replaceCharacters(
                 URLPATTERN, URLREPLACEMENTS, value))
         return self._replaceCharacters(WORDPATTERN, WORDREPLACEMENTS, value)
+
 
     """def _replaceCharacters(self, pattern, rep, value) -> str:
         # do the replacement
