@@ -91,8 +91,16 @@ class Datasource:
                 URLPATTERN, URLREPLACEMENTS, value))
         return self._replaceCharacters(WORDPATTERN, WORDREPLACEMENTS, value)
 
-    def _replaceCharacters(self, pattern, rep, value) -> str:
+    """def _replaceCharacters(self, pattern, rep, value) -> str:
         # do the replacement
+        return pattern.sub(
+            lambda m: rep[re.escape(m.group(0))],
+            self._strip_accents(value)
+        )"""
+    
+    def _replaceCharacters(self, pattern, rep, value) -> str:
+        if value is None:
+            return ""
         return pattern.sub(
             lambda m: rep[re.escape(m.group(0))],
             self._strip_accents(value)
@@ -112,15 +120,13 @@ class Datasource:
             .decode("utf-8")
         return str(text)"""
         
-    
     def _strip_accents(self, text) -> str:
         if text is None:
             return ""
-        text = unicodedata.normalize('NFD', text)\
-            .encode('ascii', 'ignore')\
+        text = unicodedata.normalize('NFD', text) \
+            .encode('ascii', 'ignore') \
             .decode("utf-8")
         return str(text)
-
 
 
 class Pgsql:
