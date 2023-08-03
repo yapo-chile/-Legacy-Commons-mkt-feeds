@@ -6,8 +6,8 @@ include:
   - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/docker-pipeline-template'
     ref: v1
     file: 'gitlab-ci.yml'
-  - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/helm-pipeline-template'
-    ref: master
+  - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/yaml-updater'
+    ref: v1
     file: 'gitlab-ci.yml' 
   - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/repo-version-tagger'
     ref: v1
@@ -20,9 +20,7 @@ stages:
   - build-docker
   - container-scan
   - retag-docker
-  - package
   - update-chart
-  - deploy
   - version-tag
   - changelog-validate
 
