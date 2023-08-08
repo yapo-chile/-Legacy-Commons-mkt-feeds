@@ -77,15 +77,23 @@ class CatalogUsecases():
         return True
 
     # createCsv trigger process to create a file using catalogId
-    def createCsv(self, catalogId) -> bool:
-        t = threading.Thread(target=self.generate, args=(catalogId))
-        t.start()
-        return True
+    #def createCsv(self, catalogId) -> bool:
+        #t = threading.Thread(target=self.generate, args=(catalogId))
+        #t.start()
+        #return True
 
     # createAllCsv trigger process to create all files
+    #def createAllCsv(self) -> bool:
+        #t = threading.Thread(target=self.generateAll)
+        #t.start()
+        #return True
+    
     def createAllCsv(self) -> bool:
-        t = threading.Thread(target=self.generateAll)
-        t.start()
+        self.generateAll()
+        return True
+    
+    def createCsv(self, catalogId) -> bool:
+        self.generate(catalogId)
         return True
 
     # getCsvName if fileList has values concat all csv files, store it
