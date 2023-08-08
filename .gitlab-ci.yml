@@ -21,7 +21,6 @@ stages:
   - container-scan
   - retag-docker
   - update-chart
-  - deploy
   - version-tag
   - changelog-validate
 
