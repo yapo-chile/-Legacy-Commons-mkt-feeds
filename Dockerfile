@@ -4,7 +4,6 @@ ARG APPNAME
 
 COPY ./app /app
 COPY ./migrations /app/migrations
-COPY ./requirements.txt /app/requirements.txt
 WORKDIR /app
 ENV PS1="\[\e[1;32m\]$APPNAME \[\e[1;31m\][`pwd`] # \[\e[0m\]"
  
