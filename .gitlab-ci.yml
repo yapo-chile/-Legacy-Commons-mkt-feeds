@@ -10,6 +10,7 @@ include:
     file: 'gitlab-ci.yml'
 
 stages:
+  - install
   - build-docker
   - container-scan
   - retag-docker
