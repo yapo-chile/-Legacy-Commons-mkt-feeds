@@ -7,5 +7,5 @@ include:
     file: 'gitlab-ci.yml'
 
 stages:
-  - build-docker-gcr
+  - build-docker
   - deploy
