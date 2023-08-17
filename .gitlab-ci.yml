@@ -8,4 +8,6 @@ include:
 
 stages:
   - build-docker
+  - container-scan
+  - retag-docker
   - deploy
