@@ -4,14 +4,14 @@ ARG APPNAME
 
 COPY ./app /app
 COPY ./migrations /app/migrations
+COPY ./requirements.txt /app/requirements.txt
 WORKDIR /app
-
 ENV PS1="\[\e[1;32m\]$APPNAME \[\e[1;31m\][`pwd`] # \[\e[0m\]"
  
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc build-essential \
     && rm -rf /var/lib/apt/lists/* \
-    && pip install -r /app/requirements.txt \
+    && pip install -r requirements.txt \
     && apt-get purge -y --auto-remove gcc build-essential
 
 COPY app/scripts/entrypoint.sh /entrypoint.sh
