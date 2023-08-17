@@ -2,6 +2,9 @@ include:
   - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/docker-pipeline-template'
     ref: v1
     file: 'gitlab-ci.yml'
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/golang-pipeline-template'
+    ref: main
+    file: 'gitlab-ci.yml'
   - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/docker-pipeline-template'
     ref: gcr
     file: 'gitlab-ci.yml'
@@ -12,4 +15,5 @@ include:
 stages:
   - build-docker
   - container-scan
+  - retag-docker
   - deploy
