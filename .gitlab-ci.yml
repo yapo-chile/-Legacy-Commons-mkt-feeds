@@ -1,17 +1,14 @@
+# File sourced from the GitLab template collection
 include:
-  - project: 'yapo_team/yotf/sre-team/sre-services/git-ci-templates/docker-pipeline-template'
-    ref: v1
-    file: 'gitlab-ci.yml'
-  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/docker-pipeline-template'
-    ref: gcr
-    file: 'gitlab-ci.yml'
-  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/cloud-run-pipeline-template'
-    ref: master
-    file: 'gitlab-ci.yml'
+  - project: 'yapo_team/sandbox/engineering/pipelines/devops-templates'
+    file: '.gitlab-ci-cloud-build.yml'
 
-stages:
-  - install
-  - build-docker
-  - container-scan
-  - retag-docker
-  - deploy
+workflow:
+  rules:
+  - if: $CI_COMMIT_BRANCH == "develop"
+    when: always
+  - if: $CI_COMMIT_BRANCH == "staging"
+    when: always
+  - if: $CI_COMMIT_BRANCH == "master"
+    when: always
+  - when: never
