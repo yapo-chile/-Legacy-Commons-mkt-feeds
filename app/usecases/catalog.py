@@ -1,10 +1,9 @@
-import asyncio
-import datetime
-import os
-from pathlib import Path
-
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
+import threading
+import datetime
+from pathlib import Path
+import os
 
 
 # CatalogUsecases receives a catalog id and if valid returns a size-fixed
@@ -62,37 +61,37 @@ class CatalogUsecases():
     # generateAll gets all catalogConfig configured on config file
     # and iterate over them to re-create all files.
     # Returns true when process is done
-    async def generateAll(self):
+    def generateAll(self):
         print("Generating all catalogs")
         catalogAllConfig = self.catalogRepo.getAllCatalogConfig()
         catalogRaw = self.currencyRepo.getRawCatalogWithFixedPrice(
             self.catalogRepo.getRawCatalog()
         )
-
+        
         for key, catalogConfig in catalogAllConfig.items():
             print("Key", key)
             print("catalogConfig ", catalogConfig)
             self.generateFromCatalog(catalogRaw, catalogConfig, key)
         del catalogRaw
-
+        
         return True
 
     # createCsv trigger process to create a file using catalogId
-    # def createCsv(self, catalogId) -> bool:
-        # t = threading.Thread(target=self.generate, args=(catalogId))
-        # t.start()
-        # return True
+    #def createCsv(self, catalogId) -> bool:
+        #t = threading.Thread(target=self.generate, args=(catalogId))
+        #t.start()
+        #return True
 
     # createAllCsv trigger process to create all files
-    # def createAllCsv(self) -> bool:
-        # t = threading.Thread(target=self.generateAll)
-        # t.start()
-        # return True
-
+    #def createAllCsv(self) -> bool:
+        #t = threading.Thread(target=self.generateAll)
+        #t.start()
+        #return True
+    
     def createAllCsv(self) -> bool:
-        asyncio.create_task(self.generateAll())
+        self.generateAll()
         return True
-
+    
     def createCsv(self, catalogId) -> bool:
         self.generate(catalogId)
         return True
@@ -127,7 +126,7 @@ class CatalogUsecases():
     """def filepath(self, catalogId):  # type: ignore
         return "{}/{}".format(self.location,
                               self.filename(catalogId))"""
-
+    
     def filepath(self, catalogId):
         directory = "tmp"
         os.makedirs(directory, exist_ok=True)
