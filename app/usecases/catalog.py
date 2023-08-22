@@ -1,4 +1,4 @@
-import asyncio
+
 import datetime
 import os
 from pathlib import Path
@@ -62,7 +62,7 @@ class CatalogUsecases():
     # generateAll gets all catalogConfig configured on config file
     # and iterate over them to re-create all files.
     # Returns true when process is done
-    async def generateAll(self):
+    def generateAll(self):
         print("Generating all catalogs")
         catalogAllConfig = self.catalogRepo.getAllCatalogConfig()
         catalogRaw = self.currencyRepo.getRawCatalogWithFixedPrice(
@@ -90,7 +90,7 @@ class CatalogUsecases():
         # return True
 
     def createAllCsv(self) -> bool:
-        asyncio.create_task(self.generateAll())
+        self.generateAll()
         return True
 
     def createCsv(self, catalogId) -> bool:
