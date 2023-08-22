@@ -20,8 +20,8 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["gunicorn", "-b", "0.0.0.0:5000",\
     "--log-level", "debug", "--enable-stdio-inheritance", \
-    "--timeout", "300", \
-    "--graceful-timeout", "300", \
+    "--timeout", "1800", \
+    "--graceful-timeout", "1800", \
     "--preload", \
     "--capture-output", \
     "app:APP"]
