@@ -1,6 +1,7 @@
 
 import datetime
 import os
+import threading
 from pathlib import Path
 
 import numpy as np  # type: ignore
@@ -78,24 +79,24 @@ class CatalogUsecases():
         return True
 
     # createCsv trigger process to create a file using catalogId
-    # def createCsv(self, catalogId) -> bool:
-        # t = threading.Thread(target=self.generate, args=(catalogId))
-        # t.start()
-        # return True
+    def createCsv(self, catalogId) -> bool:
+        t = threading.Thread(target=self.generate, args=(catalogId))
+        t.start()
+        return True
 
     # createAllCsv trigger process to create all files
-    # def createAllCsv(self) -> bool:
-        # t = threading.Thread(target=self.generateAll)
-        # t.start()
-        # return True
-
     def createAllCsv(self) -> bool:
-        self.generateAll()
+        t = threading.Thread(target=self.generateAll)
+        t.start()
         return True
 
-    def createCsv(self, catalogId) -> bool:
-        self.generate(catalogId)
-        return True
+    # def createAllCsv(self) -> bool:
+    #     self.generateAll()
+    #     return True
+
+    # def createCsv(self, catalogId) -> bool:
+    #     self.generate(catalogId)
+    #     return True
 
     # getCsvName if fileList has values concat all csv files, store it
     # and returns this new filename. Otherwise returns catalogId
